@@ -8,7 +8,7 @@ To build this software, modify the "parameters.hpp" file to the correct number o
 
 Arguments:
 
-./run_program <json filename> <output filename>
+./run_program jsonfilename outputfilename
 
 
 
