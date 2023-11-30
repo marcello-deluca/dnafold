@@ -1,0 +1,6 @@
+test1=32
+test5=dogs
+test72 = cats
+#don't count this line
+test96=   37 #don't include this comment either
+     test42      =        42

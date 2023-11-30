@@ -20,12 +20,17 @@ int main (int argc, char ** argv){
   bool debug_time = false;
   srand(seed);
   if (argc!=3){
-    std::cerr << "usage: dnaBD designfile.json trajectory_out.dat\n";
+    std::cerr << "usage: dnaBD inputFile\n";
   }
   ///////////////////////////////////////////////////////////////////
   // CREATE OUTPUT FILES ///////////////////////////////////////////
   /////////////////////////////////////////////////////////////////
   //std::ofstream trajectory;
+
+  std::vector<std::pair<std::string, std::string> > inputs;
+  readInputFile(std::string str(argv[1]), inputs);
+
+  
   std::string trajectory_file_name;
   trajectory_file_name.append(argv[2]);
   std::ofstream trajectory(trajectory_file_name);
