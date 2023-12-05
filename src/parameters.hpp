@@ -51,16 +51,16 @@ double binding_distance_cutoff = 2; //nm
 bool FORCED_BINDING = true;
 
 // NUMBER OF SCAFFOLD AND STAPLE IN DESIGN
-const size_t n_scaf = 48;// 48;//432;//224;//64;//432;// 48;//48;//28;// 48; // 512/8;
-const size_t n_stap = 48;// 48;//432;//224-8+1;//0;//432;//48; //28;//48; //512/8;
+const size_t n_scaf = 224;// 48;//432;//224;//64;//432;// 48;//48;//28;// 48; // 512/8;
+const size_t n_stap = 224;// 48;//432;//224-8+1;//0;//432;//48; //28;//48; //512/8;
 std::vector<std::mutex> mutexes(n_scaf+n_stap);
 
 // TIME BASED PARAMETERS
-const size_t lsim = 1E9; //steps
-const double dt = .01; //nanoseconds
-const size_t stepsPerFrame = 10000;
-const size_t print_to_stdout_every = 20000;
-const size_t stepsPerNeighborListRefresh = 1000;
+size_t lsim = 1E9; //steps
+double dt = .01; //nanoseconds
+size_t stepsPerFrame = 10000;
+size_t print_to_stdout_every = 20000;
+size_t stepsPerNeighborListRefresh = 1000;
 
 
 // ENVIRONMENT
@@ -69,8 +69,8 @@ double tm273 = temp - 273.15E0;
 double visc = (3.245157366681122E-11 * pow(tm273,4) - 9.061289916246450E-09 * pow(tm273,3) + 9.845093457119180E-07 * pow(tm273,2) - 5.521101038709857E-05 * tm273 + 1.778370453327189E-03) * 1E3;
 
 // ANNEALING
-const double final_temp = 300.0;
-const double annealing_rate = 0.1E-5; //Annealing rate in K/step
+double final_temp = 300.0;
+double annealing_rate = 0.1E-5; //Annealing rate in K/step
 
 // PARTICLE INTERACTIONS
 const double beadDiameter = 2.7; //nm
@@ -121,9 +121,6 @@ std::vector<size_t> isBound(n_part, default_size_t);
 std::vector<size_t> prevBound(n_part, 0);
 std::vector<std::vector<double> > torques (n_part, std::vector<double>(3, default_value));
 std::vector<std::vector<double> > forces (n_part, std::vector<double>(3, default_value));
-
-
-
 
 std::vector<std::vector<double> > randomComponent (n_part, std::vector<double>(6, default_value));
 std::vector<std::vector<int> >   connectivity (n_part, std::vector<int>  (n_part, default_value));

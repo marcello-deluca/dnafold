@@ -1,8 +1,15 @@
+
+
+
 #include "forceUtils.hpp"
 #include "parameters.hpp"
 #include "importer_function.hpp"
 #include "simInit.hpp"
 #include "recordFrame.hpp"
+
+#include "setParameters.hpp"
+#include "readInputFile.hpp"
+
 #include "resetForces.hpp"
 #include "resetStochasticForces.hpp"
 #include "calculateStochasticForces.hpp"
@@ -15,11 +22,12 @@
 #include <mutex>
 #include "MakeVerletList.hpp"
 #include "VerletList.hpp"
+
 int main (int argc, char ** argv){
   bool prependTrajWithLabels = false;
   bool debug_time = false;
   srand(seed);
-  if (argc!=3){
+  if (argc!=2){
     std::cerr << "usage: dnaBD inputFile\n";
   }
   ///////////////////////////////////////////////////////////////////
@@ -28,14 +36,23 @@ int main (int argc, char ** argv){
   //std::ofstream trajectory;
 
   std::vector<std::pair<std::string, std::string> > inputs;
-  readInputFile(std::string str(argv[1]), inputs);
+  readInputFile((std::string)argv[1], inputs);
 
+  std::string inFile;
+  std::string outFile;
+  size_t NTHREADS = 1;
+  int reportTimings = 0;
+  
+  
+  setParameters(stepsPerFrame,lsim,dt,print_to_stdout_every,stepsPerNeighborListRefresh,temp,final_temp,annealing_rate,lastconfname,CIRCULAR_SCAFFOLD,FORCED_BINDING,NTHREADS,reportTimings,pbc, inFile,outFile,inputs);
   
   std::string trajectory_file_name;
-  trajectory_file_name.append(argv[2]);
+  std::cout << "Outputting to files starting with " << outFile << "\n";
+  trajectory_file_name.append(outFile);
   std::ofstream trajectory(trajectory_file_name);
   //trajectory.open (trajectory_file_name);
   //trajectory << "TESTING TRAJECTORY OUTPUT\n";
+
   if (prependTrajWithLabels){
     trajectory << "n box x y z ax ay az bx by bz cx cy cz\n";
   }
@@ -59,6 +76,7 @@ int main (int argc, char ** argv){
     std::cout << "\n File \"" << bind_time_name2 << "\" did not open." << std::endl;
     return 1;
   }
+  
   std::cout << "outputting averageable bind times to: " << bind_time_name2 << ".\n";
   //btout << "Bind Times: \n" << "Time   number bound\n";
 
@@ -102,8 +120,8 @@ int main (int argc, char ** argv){
   ////////////////////////////////////////////////////////////////////////
   // FILE LOADING AND CONNECTIVITY MATRICES ETC /////////////////////////
   //////////////////////////////////////////////////////////////////////
-  std::cout << "LOADING FILE " << argv[1] << ".\n";
-  load_file(argv[1], SM, staple_connections, stapleNumbers, connectivity, n_bonds, n_staple_seqs, isCrossover, StrandNumber, n_nucleotides_per_bead);
+  std::cout << "LOADING FILE " << inFile.data() << ".\n";
+  load_file(&inFile[0], SM, staple_connections, stapleNumbers, connectivity, n_bonds, n_staple_seqs, isCrossover, StrandNumber, n_nucleotides_per_bead);
   //std::cout << "Connectivity of 111 and 112: " << connectivity[111][112] << " " << connectivity[112][111] << ".\n";
   std::cout << "LOADED " << argv[1] << ".\n";
 
@@ -125,15 +143,15 @@ int main (int argc, char ** argv){
     }
   }
   //Sheet Structure
-  isCrossover[42]=0;
-  isCrossover[41]=0;
-  isCrossover[belongsTo[42]]=0;
-  isCrossover[belongsTo[41]]=0;
+  //isCrossover[42]=0;
+  //isCrossover[41]=0;
+  // isCrossover[belongsTo[42]]=0;
+  //isCrossover[belongsTo[41]]=0;
 
   
   //4HB
-  //isCrossover[223]=1;
-  //isCrossover[belongsTo[223]]=1;
+  isCrossover[223]=1;
+  isCrossover[belongsTo[223]]=1;
 
   makeConnectivityMatrix(n_scaf, connectivity);
   for(size_t i = 0; i < n_part; i++){
@@ -154,12 +172,6 @@ int main (int argc, char ** argv){
     PerfectComplements << i << " " << belongsTo[i] << "\n";
   }
   PerfectComplements.close();
-
-
-
-
-
-  
   
   std::string OUT_TYPE = "LAMMPS";
   /////////////////////////////////////////////////////////////////////

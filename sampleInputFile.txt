@@ -1,0 +1,15 @@
+stepsPerFrame = 1000
+lsim = 1E9
+dt = 0.005
+print_to_stdout_every = 1000
+stepsPerNeighborListRefresh = 1000
+temp = 300
+final_temp = 300
+annealing_rate = 1E-5
+lastconfname = last_conf.dat
+CIRCULAR_SCAFFOLD = true
+FORCED_BINDING = false
+NTHREADS = 10
+ReportTimings = 0
+inFile = 4HB.json
+outFile = 4HB.dat

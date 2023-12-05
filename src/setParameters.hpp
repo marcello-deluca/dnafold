@@ -12,58 +12,78 @@ bool evaluateTrueFalseStatement(std::string in){
     exit(0);
   }
 }
-void setParameters (size_t & stepsPerFrame, size_t & lsim, double & dt, size_t & print_to_stdout_every, size_t & stepsPerNeighborListRefresh, double & temp, double & final_temp, double & annealing_rate, std::string & lastconfname, bool & CIRCULAR_SCAFFOLD, bool & FORCED_BINDING, size_t NTHREADS, int & reportTimings, string & inFile, string & outFile, vector<pair<string,string> > & inputs ){
+void setParameters (size_t & stepsPerFrame, size_t & lsim, double & dt, size_t & print_to_stdout_every, size_t & stepsPerNeighborListRefresh, double & temp, double & final_temp, double & annealing_rate, std::string & lastconfname, bool & CIRCULAR_SCAFFOLD, bool & FORCED_BINDING, size_t NTHREADS, int & reportTimings, bool & pbc, string & inFile, string & outFile, vector<pair<string,string> > & inputs ){
   for (size_t i = 0; i < inputs.size(); ++i){
+    std::string key = inputs[i].first;
     std::string val = inputs[i].second;
-    switch (inputs[i]){
-    case "stepsPerFrame":
+    if (key ==  "stepsPerFrame"){
       stepsPerFrame = (size_t) stoi(val);
-      break;
-    case "lsim":
-      lsim = (size_t) stoi(val);
-      break;
-    case "dt":
+      std::cout << "Printing to trajectory file every " << stepsPerFrame << " frames\n";
+    }
+    if (key == "lsim"){
+      lsim = (size_t) stod(val);
+      std::cout << "simulation length: " << lsim << " steps\n";
+    }
+    if (key == "dt"){
       dt = stod(val);
-      break;
-    case "print_to_stdout_every":
+      std::cout << "using timestep of " << dt << " nanoseconds\n";
+    }
+    if (key == "print_to_stdout_every"){
       print_to_stdout_every = (size_t) stoi(val);
-      break;
-    case "stepsPerNeighborListRefresh":
+      std::cout << "Printing to standard output every " << print_to_stdout_every << " steps\n";
+    }
+    if (key == "stepsPerNeighborListRefresh"){
       stepsPerNeighborListRefresh = (size_t) stoi(val);
-      break;
-    case "temp":
+      std::cout << "Refreshing neighbor list every " << stepsPerNeighborListRefresh << " steps\n";
+    }
+    if (key == "temp"){
       temp = stod(val);
-      break;
-    case "final_temp":
+      std::cout << "Starting temp: " << temp << " K\n";
+    }
+    if (key == "final_temp"){
       final_temp = stod(val);
-      break;
-    case "annealing_rate":
+      std::cout << "Final temp: " << final_temp << " K\n";
+    }
+    if (key == "annealing_rate"){
       annealing_rate = stod(val);
-      break;
-    case "lastconfname":
+      std::cout << "Using annealing rate of " << annealing_rate << " K / step\n";
+    }
+    if (key == "lastconfname"){
       lastconfname = val;
-      break;
-    case "CIRCULAR_SCAFFOLD":
+      std::cout << "Outputting last conf to last_conf file: " << lastconfname << "\n";
+    }
+    if (key == "CIRCULAR_SCAFFOLD"){
       CIRCULAR_SCAFFOLD = evaluateTrueFalseStatement(val);
-      break;
-    case "FORCED_BINDING":
+    }
+    if (key == "FORCED_BINDING"){
       FORCED_BINDING = evaluateTrueFalseStatement(val);
-      break;
-    case "NTHREADS":
+    }
+    if (key == "NTHREADS"){
       NTHREADS = (size_t) stoi(val);
-      break;
-    case "ReportTimings":
-      ReportTimings = stoi(val);
-      break;
-    case "inFile":
+      std::cout << "Carrying out force calculations using " << NTHREADS << " threads\n";
+    }
+    if (key == "reportTimings"){
+      reportTimings = stoi(val);
+    }
+    if (key == "inFile"){
       inFile = val;
-      break;
-    case "outFile":
-      outFile = val;q
-      break;
+      std::cout << "Using " << inFile << " as reference design file\n";
+    }
+    if (key == "outFile"){
+      outFile = val;
+      std::cout << "Outputting trajectory to " << outFile << "\n";
+    }
+    if (key == "pbc"){
+      pbc = evaluateTrueFalseStatement(val);
+      if (pbc){
+	std::cout << "using periodic boundary conditions\n";
+      } else {
+	std::cout << "not using periodic boundary conditions\n";
+      }
     }
   }
 }
+
 /*
    parameters that we can adjust in the input file:
    stepsPerFrame (size_t)
@@ -83,4 +103,5 @@ void setParameters (size_t & stepsPerFrame, size_t & lsim, double & dt, size_t &
    inFile (string)
    outFile (string)
 */
+
 #endif
