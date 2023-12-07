@@ -45,7 +45,7 @@ int main (int argc, char ** argv){
   int NATOM;
   size_t STEPNUMBER = 0;
   
-  setParameters(stepsPerFrame,lsim,dt,print_to_stdout_every,stepsPerNeighborListRefresh,temp,final_temp,annealing_rate,lastconfname,CIRCULAR_SCAFFOLD,FORCED_BINDING,NTHREADS,reportTimings,pbc, inFile,outFile,inputs);
+  setParameters(stepsPerFrame,lsim,dt,print_to_stdout_every,stepsPerNeighborListRefresh,temp,final_temp,annealing_rate,lastconfname,CIRCULAR_SCAFFOLD,FORCED_BINDING,NTHREADS,reportTimings,pbc, inFile,outFile, binding_energy_kcal_mol, inputs);
   
   std::string trajectory_file_name;
   std::cout << "Outputting to files starting with " << outFile << "\n";
@@ -155,7 +155,7 @@ int main (int argc, char ** argv){
     
   load_file(&inFile[0], SM, staple_connections, stapleNumbers, connectivity, n_bonds, n_staple_seqs, isCrossover, StrandNumber, n_nucleotides_per_bead, CIRCULAR_SCAFFOLD);
   //std::cout << "Connectivity of 111 and 112: " << connectivity[111][112] << " " << connectivity[112][111] << ".\n";
-  std::cout << "LOADED " << inFile << ".\n";
+  std::cout << "LOADED " << inFile << ".\n";m
   for (size_t i = 0; i < n_part;i++){
     for (size_t j = 0; j < n_part; j++){
       if (SM[i][j]){
@@ -169,11 +169,6 @@ int main (int argc, char ** argv){
   //isCrossover[41]=0;
   // isCrossover[belongsTo[42]]=0;
   //isCrossover[belongsTo[41]]=0;
-
-  
-  //4HB
-  //isCrossover[223]=1;
-  //isCrossover[belongsTo[223]]=1;
 
   makeConnectivityMatrix(n_scaf, connectivity);
   for(size_t i = 0; i < n_part; i++){

@@ -12,7 +12,7 @@ bool evaluateTrueFalseStatement(std::string in){
     exit(0);
   }
 }
-void setParameters (size_t & stepsPerFrame, size_t & lsim, double & dt, size_t & print_to_stdout_every, size_t & stepsPerNeighborListRefresh, double & temp, double & final_temp, double & annealing_rate, std::string & lastconfname, bool & CIRCULAR_SCAFFOLD, bool & FORCED_BINDING, size_t NTHREADS, int & reportTimings, bool & pbc, string & inFile, string & outFile, vector<pair<string,string> > & inputs ){
+void setParameters (size_t & stepsPerFrame, size_t & lsim, double & dt, size_t & print_to_stdout_every, size_t & stepsPerNeighborListRefresh, double & temp, double & final_temp, double & annealing_rate, std::string & lastconfname, bool & CIRCULAR_SCAFFOLD, bool & FORCED_BINDING, size_t NTHREADS, int & reportTimings, bool & pbc, string & inFile, string & outFile, double & binding_energy_kcal_mol, vector<pair<string,string> > & inputs){
   for (size_t i = 0; i < inputs.size(); ++i){
     std::string key = inputs[i].first;
     std::string val = inputs[i].second;
@@ -80,6 +80,10 @@ void setParameters (size_t & stepsPerFrame, size_t & lsim, double & dt, size_t &
       } else {
 	std::cout << "not using periodic boundary conditions\n";
       }
+    }
+    if (key == "bindStrength"){
+      binding_energy_kcal_mol = stod(val);
+      std::cout << "using bead binding enthalpy of " << binding_energy_kcal_mol << " kcal/mol\n";
     }
   }
 }
