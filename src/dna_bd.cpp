@@ -155,7 +155,7 @@ int main (int argc, char ** argv){
     
   load_file(&inFile[0], SM, staple_connections, stapleNumbers, connectivity, n_bonds, n_staple_seqs, isCrossover, StrandNumber, n_nucleotides_per_bead, CIRCULAR_SCAFFOLD);
   //std::cout << "Connectivity of 111 and 112: " << connectivity[111][112] << " " << connectivity[112][111] << ".\n";
-  std::cout << "LOADED " << inFile << ".\n";m
+  std::cout << "LOADED " << inFile << ".\n";
   for (size_t i = 0; i < n_part;i++){
     for (size_t j = 0; j < n_part; j++){
       if (SM[i][j]){
