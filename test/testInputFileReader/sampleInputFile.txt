@@ -15,3 +15,5 @@ inFile = 4HB.json
 outFile = 4HB.dat
 pbc = true
 bindStrength = 10 #kcal/mol
+
+

@@ -58,7 +58,7 @@ int readInputFile(std::string fileLocation, std::vector<std::pair<std::string, s
   if (inFile.is_open()){
       while (getline(inFile,line)){
 	std::cout << line <<"\n";
-	if(line.find("#")==0){} else {
+	if(line.find("#")==0 || line==""){} else {
 	  InputParams.push_back(parseLine(line));
 	}
       }
