@@ -30,6 +30,7 @@
 *.exe
 *.out
 *.app
+dnafold
 
 # Simulation data
 *.dat
