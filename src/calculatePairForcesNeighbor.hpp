@@ -1,4 +1,4 @@
-//-std=c++11A
+//-std=c++11
 #include "potentials.hpp"
 #include "forceUtils.hpp"
 #include "headers.hpp"
@@ -139,7 +139,7 @@ void calculateIndividualParticleForces(size_t firstIndex, size_t secondIndex, st
 	if (staple_connections[i][i+1]){
 	  distances(pbc,sb,RXI,RYI,RZI,RXIJ,RYIJ,RZIJ,DIST,r,i+1);
 	  if (StrandNumber[i] != StrandNumber[i+1] && isBound[i] && isBound[i+1]){
-	      //if (isCrossover[i] && isCrossover[i+1] && StrandNumber[i] != StrandNumber[i+1] && isBound[i] && isBound[i+1]){ //check this
+	    //if (isCrossover[i] && isCrossover[i+1] && StrandNumber[i] != StrandNumber[i+1] && isBound[i] && isBound[i+1]){ //check this
 	    FORCE = simpleHarmonic(beadRadialSeparation,DIST,k_stretch);
 	    //addPairForces(i,i+1,forces,FORCE,RXIJ,RYIJ,RZIJ,DIST, mtx);
 	  } else {
@@ -187,57 +187,57 @@ void calculateIndividualParticleForces(size_t firstIndex, size_t secondIndex, st
 }
 
 void calculatePairForces(std::vector<std::vector<double> > & forces, std::vector<position3D<double> > & r, simBox<double> & sb, bool pbc, std::vector<bool> & isCrossover, double beadAxialSeparation, double beadRadialSeparation, double epsilon, double sigma, const size_t n_part, const size_t n_scaf, const size_t n_stap, std::vector<int> & belongsTo, std::vector<size_t> & isBound, std::vector<std::vector<int> > & staple_connections, double RCUT,  bool CIRCULAR_SCAFFOLD, std::ofstream & btout, size_t t, size_t & n_bound_staples, bool PRE_RUNGE_KUTTA, std::vector<int> & StrandNumber, std::ofstream & fbtOut, std::vector<size_t> & prevBound, double bind_energy_kcal_mol, double BIND_CUTOFF, bool FORCED_BINDING, std::vector<std::mutex> & mtx, std::vector<VerletList> & neighbors){
-    bool verbose = false;
-    bool excVerbose = false;
-    double k_stretch = 152;
-    double RXI, RYI, RZI;
-    double RXIJ = 0;
-    double RYIJ = 0;
-    double RZIJ = 0;
-    double DIST = 0;
-    double FORCE;
-    int IDX;
-    double ssdna_dist = beadAxialSeparation;
-    double ssdna_k = k_stretch;
-    double eqdist = 0;
-    double bind_energy = bind_energy_kcal_mol * 6.97; //convert to pN*nm
-    double bind_dist = BIND_CUTOFF; //nanometers
-    double bind_force = bind_energy/bind_dist; //piconewton
-    double FORCED_BINDING_F = 1;
-    double exc_vol_const =  6.97; //pN*nm; 6.97 pN*nm = 1kcal/mol 
-    size_t nScm1 = n_scaf-1;
-    size_t NTHREADS = 1;
+  bool verbose = false;
+  bool excVerbose = false;
+  double k_stretch = 152;
+  double RXI, RYI, RZI;
+  double RXIJ = 0;
+  double RYIJ = 0;
+  double RZIJ = 0;
+  double DIST = 0;
+  double FORCE;
+  int IDX;
+  double ssdna_dist = beadAxialSeparation;
+  double ssdna_k = k_stretch;
+  double eqdist = 0;
+  double bind_energy = bind_energy_kcal_mol * 6.97; //convert to pN*nm
+  double bind_dist = BIND_CUTOFF; //nanometers
+  double bind_force = bind_energy/bind_dist; //piconewton
+  double FORCED_BINDING_F = 1;
+  double exc_vol_const =  6.97; //pN*nm; 6.97 pN*nm = 1kcal/mol 
+  size_t nScm1 = n_scaf-1;
+  size_t NTHREADS = 1;
 
-    // FIRST SECTION: ENFORCE CIRCULAR SCAFFOLD
-    if (CIRCULAR_SCAFFOLD){
-      if (StrandNumber[0]==StrandNumber[nScm1]){
-	eqdist = beadAxialSeparation;
-      } else {
-	eqdist = beadRadialSeparation;
-      }
-      RXI = r[0].x;
-      RYI = r[0].y;
-      RZI = r[0].z;
-      distances(pbc,sb,RXI,RYI,RZI,RXIJ,RYIJ,RZIJ,DIST,r,n_scaf-1);
-      FORCE = simpleHarmonic(eqdist,DIST,k_stretch);
-      addPairForces(0,n_scaf-1,forces,FORCE,RXIJ,RYIJ,RZIJ,DIST, mtx);
+  // FIRST SECTION: ENFORCE CIRCULAR SCAFFOLD
+  if (CIRCULAR_SCAFFOLD){
+    if (StrandNumber[0]==StrandNumber[nScm1]){
+      eqdist = beadAxialSeparation;
+    } else {
+      eqdist = beadRadialSeparation;
     }
-    // MAIN LOOP: ITERATE THROUGH ALL PARTICLES
-    size_t n_particles_per_thread = ceil(n_part / NTHREADS);
-    std::vector<std::thread> threads;
-    for (size_t i = 0; i < NTHREADS; ++i){
-      size_t arg1 = i*n_particles_per_thread;
-      size_t arg2 = (i+1)*n_particles_per_thread - 1;
-      if (arg2 > n_part-1){
-	std::cout << "weird duplicate force calculation problem\n";
-	arg2 = n_part-1;
-      }
-      threads.push_back(std::thread(calculateIndividualParticleForces,arg1,arg2, std::ref(forces), std::ref(r), std::ref(sb), pbc, std::ref(isCrossover), beadAxialSeparation, beadRadialSeparation, epsilon, sigma, n_part, n_scaf, n_stap, std::ref(belongsTo), std::ref(isBound), std::ref(staple_connections), RCUT, CIRCULAR_SCAFFOLD, std::ref(btout), t, std::ref(n_bound_staples), PRE_RUNGE_KUTTA, std::ref(StrandNumber), std::ref(fbtOut), std::ref(prevBound), bind_energy_kcal_mol, BIND_CUTOFF, FORCED_BINDING,std::ref( mtx), std::ref(neighbors)) );
+    RXI = r[0].x;
+    RYI = r[0].y;
+    RZI = r[0].z;
+    distances(pbc,sb,RXI,RYI,RZI,RXIJ,RYIJ,RZIJ,DIST,r,n_scaf-1);
+    FORCE = simpleHarmonic(eqdist,DIST,k_stretch);
+    addPairForces(0,n_scaf-1,forces,FORCE,RXIJ,RYIJ,RZIJ,DIST, mtx);
+  }
+  // MAIN LOOP: ITERATE THROUGH ALL PARTICLES
+  size_t n_particles_per_thread = ceil(n_part / NTHREADS);
+  std::vector<std::thread> threads;
+  for (size_t i = 0; i < NTHREADS; ++i){
+    size_t arg1 = i*n_particles_per_thread;
+    size_t arg2 = (i+1)*n_particles_per_thread - 1;
+    if (arg2 > n_part-1){
+      std::cout << "weird duplicate force calculation problem\n";
+      arg2 = n_part-1;
+    }
+    threads.push_back(std::thread(calculateIndividualParticleForces,arg1,arg2, std::ref(forces), std::ref(r), std::ref(sb), pbc, std::ref(isCrossover), beadAxialSeparation, beadRadialSeparation, epsilon, sigma, n_part, n_scaf, n_stap, std::ref(belongsTo), std::ref(isBound), std::ref(staple_connections), RCUT, CIRCULAR_SCAFFOLD, std::ref(btout), t, std::ref(n_bound_staples), PRE_RUNGE_KUTTA, std::ref(StrandNumber), std::ref(fbtOut), std::ref(prevBound), bind_energy_kcal_mol, BIND_CUTOFF, FORCED_BINDING,std::ref( mtx), std::ref(neighbors)) );
     
-    } //end "i" loop
-    for( auto & thread : threads){
-      while (!thread.joinable()){
-      }
-      thread.join();
+  } //end "i" loop
+  for( auto & thread : threads){
+    while (!thread.joinable()){
     }
-  } // Close function
+    thread.join();
+  }
+} // Close function

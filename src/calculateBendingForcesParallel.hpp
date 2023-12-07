@@ -52,7 +52,6 @@ void calculateIndividualBendingForces(size_t idx1, size_t idx2, const size_t n_s
         RY32 -= sb.dimensions.y * std::round(RY32 / sb.dimensions.y);
 	RZ32 -= sb.dimensions.z * std::round(RZ32 / sb.dimensions.z);
       }
-
       double C22 = RX21*RX21 + RY21*RY21 + RZ21*RZ21;
       double C33 = RX32*RX32 + RY32*RY32 + RZ32*RZ32;
       double C32 = RX21*RX32 + RY21*RY32 + RZ21*RZ32;
@@ -75,7 +74,7 @@ void calculateIndividualBendingForces(size_t idx1, size_t idx2, const size_t n_s
 	double GRADRX3 = (RX21 - C32 * RX32 / C33) / C3322SQ;
 	double GRADRY3 = (RY21 - C32 * RY32 / C33) / C3322SQ;
 	double GRADRZ3 = (RZ21 - C32 * RZ32 / C33) / C3322SQ;
-	double FFI = KTH * th_eff;
+	double FFI = KTH * th_eff / sin (th_eff);
 	if (abs(THETA)<0.001){FFI = 0;}
 	else {
 	  mtx[i].lock();
