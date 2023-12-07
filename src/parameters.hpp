@@ -54,7 +54,7 @@ bool FORCED_BINDING = true;
 size_t n_scaf = 0;// 48;//432;//224;//64;//432;// 48;//48;//28;// 48; // 512/8;
 size_t n_stap = 0;// 48;//432;//224-8+1;//0;//432;//48; //28;//48; //512/8;
 
-std::vector<std::mutex> mutexes(n_scaf+n_stap);
+
 
 // TIME BASED PARAMETERS
 size_t lsim = 1E9; //steps
