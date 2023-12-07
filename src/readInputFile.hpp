@@ -30,6 +30,16 @@ void cleanString(std::string & in){
     in.erase(spLocation,1);
     spLocation=in.find(" ");
   }
+  size_t crLocation = in.find("\\r");
+  while (crLocation!=std::string::npos){
+    in.erase(crLocation,1);
+    crLocation=in.find("\\r");
+  }
+  size_t nlLocation = in.find("\\n");
+  while (nlLocation!=std::string::npos){
+    in.erase(nlLocation,1);
+    nlLocation=in.find("\\n");
+  }
 }
 
 void cleanInput(std::string & LHS, std::string & RHS){

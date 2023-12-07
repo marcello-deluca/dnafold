@@ -115,7 +115,7 @@ int main (int argc, char ** argv){
   std::vector<std::vector<int> > scaffoldNucleotides;
   std::vector<std::vector<int> > stapleNucleotides;
   
-  std::cout << "LOADING FILE " << inFile.data() << ".\n";
+  std::cout << "LOADING FILE " << inFile.data() << "\n";
   parse_json(&inFile[0], n_scaf, n_stap, scaffoldNucleotides, stapleNucleotides);
 
   size_t n_part = n_scaf + n_stap;
@@ -154,7 +154,6 @@ int main (int argc, char ** argv){
   size_t n_bound_staples = 0;
     
   load_file(&inFile[0], SM, staple_connections, stapleNumbers, connectivity, n_bonds, n_staple_seqs, isCrossover, StrandNumber, n_nucleotides_per_bead, CIRCULAR_SCAFFOLD);
-  //std::cout << "Connectivity of 111 and 112: " << connectivity[111][112] << " " << connectivity[112][111] << ".\n";
   std::cout << "LOADED " << inFile << ".\n";
   for (size_t i = 0; i < n_part;i++){
     for (size_t j = 0; j < n_part; j++){
