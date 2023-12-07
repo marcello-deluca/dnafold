@@ -1,15 +1,10 @@
-
-
-
 #include "forceUtils.hpp"
 #include "parameters.hpp"
 #include "importer_function.hpp"
 #include "simInit.hpp"
 #include "recordFrame.hpp"
-
 #include "setParameters.hpp"
 #include "readInputFile.hpp"
-
 #include "resetForces.hpp"
 #include "resetStochasticForces.hpp"
 #include "calculateStochasticForces.hpp"
@@ -22,11 +17,12 @@
 #include <mutex>
 #include "MakeVerletList.hpp"
 #include "VerletList.hpp"
+#include "parse_json.hpp"
+
 
 int main (int argc, char ** argv){
   bool prependTrajWithLabels = false;
   bool debug_time = false;
-  srand(seed);
   if (argc!=2){
     std::cerr << "usage: dnaBD inputFile\n";
   }
@@ -42,7 +38,12 @@ int main (int argc, char ** argv){
   std::string outFile;
   size_t NTHREADS = 1;
   int reportTimings = 0;
-  
+  // RESTART SPECS AND VARIABLES
+  bool RESTART = false;
+  std::string lastconfname = "last_conf.dat";
+  double xboxsize, yboxsize, zboxsize;
+  int NATOM;
+  size_t STEPNUMBER = 0;
   
   setParameters(stepsPerFrame,lsim,dt,print_to_stdout_every,stepsPerNeighborListRefresh,temp,final_temp,annealing_rate,lastconfname,CIRCULAR_SCAFFOLD,FORCED_BINDING,NTHREADS,reportTimings,pbc, inFile,outFile,inputs);
   
@@ -111,28 +112,54 @@ int main (int argc, char ** argv){
   angleOutput.open(angleOutputName);  
   angleOutput << "N B APG X Y\n";
 
-
-  ////////////////////////////////////////////////////////////////////////
-  //END OF OUTPUT FILE GENERATION ///////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////
-
+  std::vector<std::vector<int> > scaffoldNucleotides;
+  std::vector<std::vector<int> > stapleNucleotides;
   
-  ////////////////////////////////////////////////////////////////////////
-  // FILE LOADING AND CONNECTIVITY MATRICES ETC /////////////////////////
-  //////////////////////////////////////////////////////////////////////
   std::cout << "LOADING FILE " << inFile.data() << ".\n";
-  load_file(&inFile[0], SM, staple_connections, stapleNumbers, connectivity, n_bonds, n_staple_seqs, isCrossover, StrandNumber, n_nucleotides_per_bead);
+  parse_json(&inFile[0], n_scaf, n_stap, scaffoldNucleotides, stapleNucleotides);
+
+  size_t n_part = n_scaf + n_stap;
+  std::cout << "Detected " << n_scaf << " scaffold beads and " << n_stap << " staple beads for a total of " << n_part << " beads in this design.\n";
+
+  // INITIALIZE VECTORS
+  std::vector<std::mutex> mutexes(n_part);
+  std::vector<size_t> isBound(n_part, default_size_t);
+  std::vector<size_t> prevBound(n_part, 0);
+  std::vector<std::vector<double> > torques (n_part, std::vector<double>(3, default_value));
+  std::vector<std::vector<double> > forces (n_part, std::vector<double>(3, default_value));
+
+  std::vector<std::vector<double> > randomComponent (n_part, std::vector<double>(6, default_value));
+  std::vector<std::vector<int> >   connectivity (n_part, std::vector<int>  (n_part, default_value));
+  std::vector<int> stapleNumbers(n_part, default_value);
+  std::vector<bool> isCrossover(n_part, false);
+  std::vector<std::vector<int> > SM (n_part, std::vector<int> (n_part, default_value));
+  std::vector<std::vector<int> >   staple_connections (n_part, std::vector<int>  (n_part, default_value));
+  std::vector<position3D<double> > r(n_part);
+  std::vector<int> belongsTo(n_part,  -1);
+  std::vector<int> StrandNumber(n_part, -1);
+
+  // CREATE COPIES OF FORCE, TORQUE, AND R FOR RUNGE KUTTA ALGORITHM
+  std::vector<std::vector<double> > forces_forw = forces;
+  std::vector<std::vector<double> > torques_forw = torques;
+  std::vector<position3D<double> > r_proposed = r;
+
+  std::vector<VerletList> neighbors;
+
+  // RANDOM NUMBER GENERATORS
+  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine generator(seed);
+  std::normal_distribution<double> distribution(0,1);
+  srand(seed);
+
+  size_t n_bound_staples = 0;
+    
+  load_file(&inFile[0], SM, staple_connections, stapleNumbers, connectivity, n_bonds, n_staple_seqs, isCrossover, StrandNumber, n_nucleotides_per_bead, CIRCULAR_SCAFFOLD);
   //std::cout << "Connectivity of 111 and 112: " << connectivity[111][112] << " " << connectivity[112][111] << ".\n";
-  std::cout << "LOADED " << argv[1] << ".\n";
+  std::cout << "LOADED " << inFile << ".\n";
 
-  
-  // for (size_t i = 0; i < n_scaf; i++){
-  //   SM[i][i+128]=1;
-  // }
-
-  //for (size_t i = n_scaf; i<n_part-1;i++){
-  //   staple_connections[i][i+1]=1;
-  // }
+  for (size_t i = 0; i < n_scaf; ++i){
+    std::cout << "scaffold bead " << i << "is crossover: " << isCrossover[i] << "\n";
+  }
   
   for (size_t i = 0; i < n_part;i++){
     for (size_t j = 0; j < n_part; j++){
@@ -150,8 +177,8 @@ int main (int argc, char ** argv){
 
   
   //4HB
-  isCrossover[223]=1;
-  isCrossover[belongsTo[223]]=1;
+  //isCrossover[223]=1;
+  //isCrossover[belongsTo[223]]=1;
 
   makeConnectivityMatrix(n_scaf, connectivity);
   for(size_t i = 0; i < n_part; i++){
@@ -278,6 +305,8 @@ int main (int argc, char ** argv){
   auto stop_frame = std::chrono::high_resolution_clock::now();
   auto duration_frame = std::chrono::duration_cast<std::chrono::microseconds>(stop-start);
   size_t t = 0;
+  std::cout << "Initialized clocks and reset simulation timer\n";
+  
   if (!RESTART){
     t = 0;
   } else {

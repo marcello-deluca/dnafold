@@ -7,7 +7,7 @@ OBJS = $(patsubst %.cpp, %.o, $(SRCS))
 
 .PHONY: clean depend all
 
-PROGRNAME = ../run_program
+PROGRNAME = ../dnafold
 
 all: $(PROGRNAME) #$(PROGRNAME)_dbg
 
@@ -24,6 +24,6 @@ clean:
 depend:
 	makedepend $(SRCS)
 
-dna_bd.o: importer_function.hpp recordFrame.hpp noOverlapsAtInit.hpp makeConnectivityMatrix.hpp parameters.hpp headers.hpp simInit.hpp resetForces.hpp resetStochasticForces.hpp calculateStochasticForces.hpp calculatePairForcesParallel.hpp calculateBendingForcesParallel.hpp integrateMotion.hpp calculateICSTorsionAndBending.hpp setParameters.hpp readInputFile.hpp
+dna_bd.o: importer_function.hpp recordFrame.hpp noOverlapsAtInit.hpp makeConnectivityMatrix.hpp parameters.hpp headers.hpp simInit.hpp resetForces.hpp resetStochasticForces.hpp calculateStochasticForces.hpp calculatePairForcesParallel.hpp calculateBendingForcesParallel.hpp integrateMotion.hpp calculateICSTorsionAndBending.hpp setParameters.hpp readInputFile.hpp parse_json.hpp
 importer_function.o: importer_function.hpp
 
