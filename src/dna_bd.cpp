@@ -182,7 +182,7 @@ int main (int argc, char ** argv){
   
   std::ofstream PerfectComplements;
   std::string PerfectComplementsName;
-  PerfectComplementsName.append("complements.txt");
+  PerfectComplementsName.append("complements.dat");
   PerfectComplements.open(PerfectComplementsName);
   PerfectComplements << "ScaffoldParticle PairedStapleParticle StrandNumber\n";
   for (size_t i = 0; i < n_scaf; i++){

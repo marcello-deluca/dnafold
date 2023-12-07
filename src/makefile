@@ -1,5 +1,5 @@
 CPPC = g++ #clang++
-CPPFLAGS = -O3 -freciprocal-math -funsafe-math-optimizations -fno-math-errno  -fassociative-math -fno-signed-zeros -fno-trapping-math -Wall -pedantic -std=c++11 -lpthread #-Werror
+CPPFLAGS = -O3 -freciprocal-math -funsafe-math-optimizations -fno-math-errno  -fassociative-math -fno-signed-zeros -fno-trapping-math -Wall -pedantic -std=c++11 -pthread #-Werror
 
 SRCS = $(wildcard *.cpp)
 OBJS = $(patsubst %.cpp, %.o, $(SRCS))
