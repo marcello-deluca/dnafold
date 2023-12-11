@@ -45,7 +45,7 @@ int main (int argc, char ** argv){
   int NATOM;
   size_t STEPNUMBER = 0;
   
-  setParameters(stepsPerFrame,lsim,dt,print_to_stdout_every,stepsPerNeighborListRefresh,temp,final_temp,annealing_rate,lastconfname,CIRCULAR_SCAFFOLD,FORCED_BINDING,NTHREADS,reportTimings,pbc, inFile,outFile, binding_energy_kcal_mol, inputs);
+  setParameters(stepsPerFrame,lsim,dt,print_to_stdout_every,stepsPerNeighborListRefresh,temp,final_temp,annealing_rate,lastconfname,CIRCULAR_SCAFFOLD,FORCED_BINDING,NTHREADS,reportTimings,pbc, inFile,outFile, binding_energy_kcal_mol, CubicBoxSize, shrink_rate, simbox_final_size_ratio,inputs);
   
   std::string trajectory_file_name;
   std::cout << "Outputting to files starting with " << outFile << "\n";
@@ -178,6 +178,30 @@ int main (int argc, char ** argv){
     }
   }
 
+
+
+  std::ofstream metadatafile;
+  std::string metadatafilename;
+  metadatafilename.append("simulation_metadata.dat");
+  metadatafile.open(metadatafilename);  
+  metadatafile << "Simulation Metadata\n";
+  metadatafile << "Input JSON: " << inFile << "\n";
+  metadatafile << "Output file: " << outFile << "\n";
+  metadatafile << "Steps Per Frame: " << stepsPerFrame << "\n";
+  metadatafile << "Simulation Length (steps): " << lsim << "\n";
+  metadatafile << "dt: " << dt << " nanoseconds \n";
+  metadatafile << "Printing to stdout every " << print_to_stdout_every << " steps\n";
+  metadatafile << "Starting temp: " << temp << " K\n";
+  metadatafile << "Final temp: " << final_temp << " K\n";
+  metadatafile << "Using annealing rate of " << annealing_rate << " K / step\n";
+  metadatafile << "Outputting last conf to last_conf file: " << lastconfname << "\n";
+  metadatafile << "Circular scaffold is turned " << (CIRCULAR_SCAFFOLD ? "on" : "off") << "\n"; 
+  metadatafile << "Forced binding is turned " << (FORCED_BINDING ? "on" : "off") << "\n";
+  metadatafile << "Periodic boundaries are turned " << (pbc ? "on" : "off") << "\n";
+  metadatafile << "Identified " << n_scaf << " scaffold beads and " << n_stap << " staple beads for a total of " << n_part << " total beads\n"; 
+  metadatafile << "Using hybridization strength of " << binding_energy_kcal_mol << " kcal/mol\n";
+  metadatafile << "Using hybridization cutoff of " << binding_distance_cutoff << " nm\n";
+  metadatafile.close();
   
   std::ofstream PerfectComplements;
   std::string PerfectComplementsName;
