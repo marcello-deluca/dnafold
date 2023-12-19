@@ -4,7 +4,7 @@
 #include "headers.hpp"
 #include "simBox.hpp"
 #include "position3D.hpp"
-//#include <omp.h>
+#include <execution>
 #include <thread>
 #include <mutex>
 

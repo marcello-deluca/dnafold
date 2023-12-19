@@ -186,7 +186,7 @@ void calculateIndividualParticleForces(size_t firstIndex, size_t secondIndex, st
   } // end of i iterator
 }
 
-void calculatePairForces(std::vector<std::vector<double> > & forces, std::vector<position3D<double> > & r, simBox<double> & sb, bool pbc, std::vector<bool> & isCrossover, double beadAxialSeparation, double beadRadialSeparation, double epsilon, double sigma, const size_t n_part, const size_t n_scaf, const size_t n_stap, std::vector<int> & belongsTo, std::vector<size_t> & isBound, std::vector<std::vector<int> > & staple_connections, double RCUT,  bool CIRCULAR_SCAFFOLD, std::ofstream & btout, size_t t, size_t & n_bound_staples, bool PRE_RUNGE_KUTTA, std::vector<int> & StrandNumber, std::ofstream & fbtOut, std::vector<size_t> & prevBound, double bind_energy_kcal_mol, double BIND_CUTOFF, bool FORCED_BINDING, std::vector<std::mutex> & mtx, std::vector<VerletList> & neighbors){
+void calculatePairForces(std::vector<std::vector<double> > & forces, std::vector<position3D<double> > & r, simBox<double> & sb, bool pbc, std::vector<bool> & isCrossover, double beadAxialSeparation, double beadRadialSeparation, double epsilon, double sigma, const size_t n_part, const size_t n_scaf, const size_t n_stap, std::vector<int> & belongsTo, std::vector<size_t> & isBound, std::vector<std::vector<int> > & staple_connections, double RCUT,  bool CIRCULAR_SCAFFOLD, std::ofstream & btout, size_t t, size_t & n_bound_staples, bool PRE_RUNGE_KUTTA, std::vector<int> & StrandNumber, std::ofstream & fbtOut, std::vector<size_t> & prevBound, double bind_energy_kcal_mol, double BIND_CUTOFF, bool FORCED_BINDING, std::vector<std::mutex> & mtx, std::vector<VerletList> & neighbors, size_t NTHREADS){
   bool verbose = false;
   bool excVerbose = false;
   double k_stretch = 152;
@@ -206,7 +206,6 @@ void calculatePairForces(std::vector<std::vector<double> > & forces, std::vector
   double FORCED_BINDING_F = 1;
   double exc_vol_const =  6.97; //pN*nm; 6.97 pN*nm = 1kcal/mol 
   size_t nScm1 = n_scaf-1;
-  size_t NTHREADS = 1;
 
   // FIRST SECTION: ENFORCE CIRCULAR SCAFFOLD
   if (CIRCULAR_SCAFFOLD){

@@ -198,7 +198,7 @@ int main (int argc, char ** argv){
   metadatafile << "Circular scaffold is turned " << (CIRCULAR_SCAFFOLD ? "on" : "off") << "\n"; 
   metadatafile << "Forced binding is turned " << (FORCED_BINDING ? "on" : "off") << "\n";
   metadatafile << "Periodic boundaries are turned " << (pbc ? "on" : "off") << "\n";
-  metadatafile << "Identified " << n_scaf << " scaffold beads and " << n_stap << " staple beads for a total of " << n_part << " total beads\n"; 
+  metadatafile << "Identified " << n_scaf << " scaffold beads and " << n_stap << " staple beads for a total of " << n_part << " beads\n"; 
   metadatafile << "Using hybridization strength of " << binding_energy_kcal_mol << " kcal/mol\n";
   metadatafile << "Using hybridization cutoff of " << binding_distance_cutoff << " nm\n";
   metadatafile.close();
@@ -362,7 +362,7 @@ int main (int argc, char ** argv){
     //PAIR POTENTIALS - BOTH BACKBONE AND NONBONDED
     start = std::chrono::high_resolution_clock::now();
     std::vector<std::thread> ForceLoopsThreads;
-    ForceLoopsThreads.push_back(std::thread(calculatePairForces,std::ref(forces),std::ref(r),std::ref(simbox),std::ref(pbc),std::ref(isCrossover),std::ref(beadAxialSeparation),std::ref(beadRadialSeparation),std::ref(epsilon),std::ref(sigma),std::ref(n_part),std::ref(n_scaf),std::ref(n_stap),std::ref(belongsTo),std::ref(isBound),std::ref(staple_connections), std::ref(r_cut),std::ref(CIRCULAR_SCAFFOLD),std::ref(btout),std::ref(t),std::ref(n_bound_staples),true,std::ref(StrandNumber),std::ref(fbtOut),std::ref(prevBound),std::ref(binding_energy_kcal_mol),std::ref(binding_distance_cutoff),std::ref(FORCED_BINDING),std::ref(mutexes), std::ref(neighbors)));
+    ForceLoopsThreads.push_back(std::thread(calculatePairForces,std::ref(forces),std::ref(r),std::ref(simbox),std::ref(pbc),std::ref(isCrossover),std::ref(beadAxialSeparation),std::ref(beadRadialSeparation),std::ref(epsilon),std::ref(sigma),std::ref(n_part),std::ref(n_scaf),std::ref(n_stap),std::ref(belongsTo),std::ref(isBound),std::ref(staple_connections), std::ref(r_cut),std::ref(CIRCULAR_SCAFFOLD),std::ref(btout),std::ref(t),std::ref(n_bound_staples),true,std::ref(StrandNumber),std::ref(fbtOut),std::ref(prevBound),std::ref(binding_energy_kcal_mol),std::ref(binding_distance_cutoff),std::ref(FORCED_BINDING),std::ref(mutexes), std::ref(neighbors), std::ref(NTHREADS)));
     ForceLoopsThreads.push_back(std::thread(calculateBendingForces,n_scaf,std::ref(isBound),std::ref(r), std::ref(forces), dsdna_lp, k_B*temp, beadAxialSeparation, std::ref(stapleNumbers), std::ref(isCrossover), std::ref(simbox), pbc, std::ref(mutexes)));
     for (auto & thread:  ForceLoopsThreads){
       while(!thread.joinable()){
@@ -386,7 +386,7 @@ int main (int argc, char ** argv){
     start = std::chrono::high_resolution_clock::now();
     resetForces(forces_forw, torques_forw, n_part);
     std::vector<std::thread> RungeKuttaThreads;
-    RungeKuttaThreads.push_back(std::thread(calculatePairForces,std::ref(forces),std::ref(r_proposed),std::ref(simbox),std::ref(pbc),std::ref(isCrossover),std::ref(beadAxialSeparation),std::ref(beadRadialSeparation),std::ref(epsilon),std::ref(sigma),std::ref(n_part),std::ref(n_scaf),std::ref(n_stap),std::ref(belongsTo),std::ref(isBound),std::ref(staple_connections), std::ref(r_cut),std::ref(CIRCULAR_SCAFFOLD),std::ref(btout),std::ref(t),std::ref(n_bound_staples),true,std::ref(StrandNumber),std::ref(fbtOut),std::ref(prevBound),std::ref(binding_energy_kcal_mol),std::ref(binding_distance_cutoff),std::ref(FORCED_BINDING),std::ref(mutexes), std::ref(neighbors)));
+    RungeKuttaThreads.push_back(std::thread(calculatePairForces,std::ref(forces),std::ref(r_proposed),std::ref(simbox),std::ref(pbc),std::ref(isCrossover),std::ref(beadAxialSeparation),std::ref(beadRadialSeparation),std::ref(epsilon),std::ref(sigma),std::ref(n_part),std::ref(n_scaf),std::ref(n_stap),std::ref(belongsTo),std::ref(isBound),std::ref(staple_connections), std::ref(r_cut),std::ref(CIRCULAR_SCAFFOLD),std::ref(btout),std::ref(t),std::ref(n_bound_staples),true,std::ref(StrandNumber),std::ref(fbtOut),std::ref(prevBound),std::ref(binding_energy_kcal_mol),std::ref(binding_distance_cutoff),std::ref(FORCED_BINDING),std::ref(mutexes), std::ref(neighbors), std::ref(NTHREADS)));
     RungeKuttaThreads.push_back(std::thread(calculateBendingForces,n_scaf,std::ref(isBound),std::ref(r_proposed), std::ref(forces), dsdna_lp, k_B*temp, beadAxialSeparation, std::ref(stapleNumbers), std::ref(isCrossover), std::ref(simbox), pbc, std::ref(mutexes)));
     for (auto & thread : RungeKuttaThreads){
       while(!thread.joinable()){
