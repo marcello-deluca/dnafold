@@ -1,6 +1,7 @@
 #ifndef DEFINED_POSITION3D
 #define DEFINED_POSITION3D
 #include <vector>
+using namespace std;
 template<typename T>
 class position3D{
 public:
