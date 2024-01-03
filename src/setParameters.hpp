@@ -83,12 +83,15 @@ void setParameters (size_t & stepsPerFrame, size_t & lsim, double & dt, size_t &
     }
     if (key == "BoxSize"){
       CubicBoxSize = stod(val);
+      std::cout << "Using starting box size of " << CubicBoxSize << "\n";
     }
     if (key == "ShrinkRate"){
       shrink_rate = stod(val);
+      std::cout << "Shrinking box at rate of " << shrink_rate << " nm/frame\n";
     }
     if (key == "FinalSizeRatio"){
       simbox_final_size_ratio = stod(val);
+      std::cout << "Final size ratio set to " << simbox_final_size_ratio << " for a final box size of " << simbox_final_size_ratio * shrink_rate << " nm\n";
     }
     if (key == "bindStrength"){
       binding_energy_kcal_mol = stod(val);

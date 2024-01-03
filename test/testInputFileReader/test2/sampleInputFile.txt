@@ -15,7 +15,7 @@ inFile = 4HB.json
 outFile = 4HB.dat
 pbc = true
 bindStrength = 10 #kcal/mol
-BoxSize=300
+BoxSize=200
 ShrinkRate=1E-5
 FinalSizeRatio=0.5
 

@@ -18,8 +18,6 @@
 #include "MakeVerletList.hpp"
 #include "VerletList.hpp"
 #include "parse_json.hpp"
-
-
 int main (int argc, char ** argv){
   bool prependTrajWithLabels = false;
   bool debug_time = false;
@@ -29,11 +27,8 @@ int main (int argc, char ** argv){
   ///////////////////////////////////////////////////////////////////
   // CREATE OUTPUT FILES ///////////////////////////////////////////
   /////////////////////////////////////////////////////////////////
-  //std::ofstream trajectory;
-
   std::vector<std::pair<std::string, std::string> > inputs;
   readInputFile((std::string)argv[1], inputs);
-
   std::string inFile;
   std::string outFile;
   size_t NTHREADS = 1;
@@ -44,20 +39,14 @@ int main (int argc, char ** argv){
   double xboxsize, yboxsize, zboxsize;
   int NATOM;
   size_t STEPNUMBER = 0;
-  
   setParameters(stepsPerFrame,lsim,dt,print_to_stdout_every,stepsPerNeighborListRefresh,temp,final_temp,annealing_rate,lastconfname,CIRCULAR_SCAFFOLD,FORCED_BINDING,NTHREADS,reportTimings,pbc, inFile,outFile, binding_energy_kcal_mol, CubicBoxSize, shrink_rate, simbox_final_size_ratio,inputs);
-  
   std::string trajectory_file_name;
   std::cout << "Outputting to files starting with " << outFile << "\n";
   trajectory_file_name.append(outFile);
   std::ofstream trajectory(trajectory_file_name);
-  //trajectory.open (trajectory_file_name);
-  //trajectory << "TESTING TRAJECTORY OUTPUT\n";
-
   if (prependTrajWithLabels){
     trajectory << "n box x y z ax ay az bx by bz cx cy cz\n";
   }
-  //std::ofstream bindTimeOutput;
   std::string bind_time_name = trajectory_file_name;
   bind_time_name.append("_BINDTIMES.dat");
   std::ofstream btout(bind_time_name);
@@ -66,9 +55,6 @@ int main (int argc, char ** argv){
     return 1;
   }
   std::cout << "outputting bind times to: " << bind_time_name << ".\n";
-  //btout << "Bind Times: \n" << "Time   number bound\n";
-
-
   std::string bind_time_name2 = trajectory_file_name;
   bind_time_name2.append("_BINDTIMES_AVERAGABLE.dat");
   std::ofstream btout2(bind_time_name2);
@@ -77,22 +63,16 @@ int main (int argc, char ** argv){
     std::cout << "\n File \"" << bind_time_name2 << "\" did not open." << std::endl;
     return 1;
   }
-  
   std::cout << "outputting averageable bind times to: " << bind_time_name2 << ".\n";
-  //btout << "Bind Times: \n" << "Time   number bound\n";
-
-
   std::string FirstBindTime = trajectory_file_name;
   FirstBindTime.append("_FIRSTBINDTIMES.dat");
   std::ofstream fbtOut(FirstBindTime);
   if (!fbtOut){
-    //std::cout << "\n File " << std::quoted(outFileName) << " did not open" << std::endl;
     std::cout << "\n File \"" << FirstBindTime << "\" did not open." << std::endl;
     return 1;
   }
   std::cout << "outputting first bind times for each scaf to: " << FirstBindTime << ".\n";
   fbtOut << "particleNumber firstEncounterTime\n";
-  
   std::ofstream forceOutput;
   std::string forceOutputName;
   forceOutputName.append(trajectory_file_name);
@@ -127,7 +107,6 @@ int main (int argc, char ** argv){
   std::vector<size_t> prevBound(n_part, 0);
   std::vector<std::vector<double> > torques (n_part, std::vector<double>(3, default_value));
   std::vector<std::vector<double> > forces (n_part, std::vector<double>(3, default_value));
-
   std::vector<std::vector<double> > randomComponent (n_part, std::vector<double>(6, default_value));
   std::vector<std::vector<int> >   connectivity (n_part, std::vector<int>  (n_part, default_value));
   std::vector<int> stapleNumbers(n_part, default_value);
@@ -137,22 +116,17 @@ int main (int argc, char ** argv){
   std::vector<position3D<double> > r(n_part);
   std::vector<int> belongsTo(n_part,  -1);
   std::vector<int> StrandNumber(n_part, -1);
-
   // CREATE COPIES OF FORCE, TORQUE, AND R FOR RUNGE KUTTA ALGORITHM
   std::vector<std::vector<double> > forces_forw = forces;
   std::vector<std::vector<double> > torques_forw = torques;
   std::vector<position3D<double> > r_proposed = r;
-
   std::vector<VerletList> neighbors;
-
   // RANDOM NUMBER GENERATORS
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
   std::normal_distribution<double> distribution(0,1);
   srand(seed);
-
   size_t n_bound_staples = 0;
-    
   load_file(&inFile[0], SM, staple_connections, stapleNumbers, connectivity, n_bonds, n_staple_seqs, isCrossover, StrandNumber, n_nucleotides_per_bead, CIRCULAR_SCAFFOLD);
   std::cout << "LOADED " << inFile << ".\n";
   for (size_t i = 0; i < n_part;i++){
@@ -165,10 +139,9 @@ int main (int argc, char ** argv){
   }
   //Sheet Structure
   //isCrossover[42]=0;
-  //isCrossover[41]=0;
+  // isCrossover[41]=0;
   // isCrossover[belongsTo[42]]=0;
   //isCrossover[belongsTo[41]]=0;
-
   makeConnectivityMatrix(n_scaf, connectivity);
   for(size_t i = 0; i < n_part; i++){
     for (size_t j = 0; j < n_part; j++){
@@ -177,9 +150,6 @@ int main (int argc, char ** argv){
       }
     }
   }
-
-
-
   std::ofstream metadatafile;
   std::string metadatafilename;
   metadatafilename.append("simulation_metadata.dat");
@@ -202,7 +172,6 @@ int main (int argc, char ** argv){
   metadatafile << "Using hybridization strength of " << binding_energy_kcal_mol << " kcal/mol\n";
   metadatafile << "Using hybridization cutoff of " << binding_distance_cutoff << " nm\n";
   metadatafile.close();
-  
   std::ofstream PerfectComplements;
   std::string PerfectComplementsName;
   PerfectComplementsName.append("complements.dat");
@@ -212,12 +181,7 @@ int main (int argc, char ** argv){
     PerfectComplements << i << " " << belongsTo[i] << "\n";
   }
   PerfectComplements.close();
-  
   std::string OUT_TYPE = "LAMMPS";
-  /////////////////////////////////////////////////////////////////////
-  // END OF FILE LOADING /////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////
-
   ////////////////////////////////////////////////////////////////////
   // PRINT BASIC SIMULATION PARAMS //////////////////////////////////
   //////////////////////////////////////////////////////////////////
@@ -227,10 +191,6 @@ int main (int argc, char ** argv){
   std::cout << "Gamma_rot = " << gamma_rot << ".\n";
   std::cout << "Using seed = " << seed << ".\n";
   std::cout << "Initializing particles...\n";
-  ///////////////////////////////////////////////////////////////////
-  // END OF PRINT BASIC SIMULATION PARAMS //////////////////////////
-  /////////////////////////////////////////////////////////////////
-
   //////////////////////////////////////////////////////////////////
   // INIT /////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////
@@ -239,16 +199,11 @@ int main (int argc, char ** argv){
   } else {
     load_frame(lastconfname,xboxsize,yboxsize,zboxsize,NATOM,STEPNUMBER,r);
   }
-
   if (RESTART){
     simbox.dimensions.x = xboxsize;
     simbox.dimensions.y = yboxsize;
     simbox.dimensions.z = zboxsize;
   }
-  //////////////////////////////////////////////////////////////////
-  // END OF INIT //////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////
-  
   /////////////////////////////////////////////////////////////////
   // GENERATE TOPOLOGY FILE //////////////////////////////////////
   ///////////////////////////////////////////////////////////////
@@ -281,7 +236,6 @@ int main (int argc, char ** argv){
     }
     topf << "   " << r[i].x << "   " << r[i].y << "   " << r[i].z << "\n";
   }
-
   topf << std::endl;
   topf << "Bonds\n\n"; 
   int bond_idx = 0;
@@ -298,16 +252,9 @@ int main (int argc, char ** argv){
     }
   }
   topf.close();
-
-
   std::cout << "printed topology file\n";
-  // return EXIT_SUCCESS;
   /////////////////////////////////////////////////////////////////
-  // END OF GENERATE TOPOLOGY FILE ///////////////////////////////
-  ///////////////////////////////////////////////////////////////
-  
-  /////////////////////////////////////////////////////////////////
-  //// ACTUAL SIMULATION STARTS HERE /////////////////////////////
+  //// SIMULATION STARTS HERE ////////////////////////////////////
   ///////////////////////////////////////////////////////////////
   std::cout << "Starting Simulation...\n";
   // SET CLOCKS
@@ -319,13 +266,11 @@ int main (int argc, char ** argv){
   auto duration_frame = std::chrono::duration_cast<std::chrono::microseconds>(stop-start);
   size_t t = 0;
   std::cout << "Initialized clocks and reset simulation timer\n";
-  
   if (!RESTART){
     t = 0;
   } else {
     t = STEPNUMBER;
   }
-  
   ////////////////////////////////////////////////////////////////
   // SIMULATION LOOPS ///////////////////////////////////////////
   //////////////////////////////////////////////////////////////
@@ -337,10 +282,6 @@ int main (int argc, char ** argv){
       recordFrame(OUT_TYPE, trajectory, r, n_part, n_scaf, stapleNumbers, t, simbox, isBound);
       stop = std::chrono::high_resolution_clock::now();
       duration = std::chrono::duration_cast<std::chrono::microseconds> (stop-start);
-      // RECORD FRAME TIME
-      if (1){
-	//std::cout << "Time to record frame = " << duration.count() << ".\n";
-      }
     }
     // SHRINKING PERIODIC BOX
     if (simbox.dimensions.x > CubicBoxSize*simbox_final_size_ratio){
@@ -398,7 +339,7 @@ int main (int argc, char ** argv){
     if (t%1000 == 0 && debug_time){
       std::cout << "debug: duration for repeat of force calculations per runge kutta: " << duration.count() << ".\n";
     }
-    //THESE ARE JUST FOR CHECKING THAT THE SUM OF FORCES AND TORQUES IS ZERO.
+    //Check that forces are balanced.
     std::vector<double> totalf(3,0);
     std::vector<double> totaltq(3,0);
     //Average forces
@@ -412,9 +353,9 @@ int main (int argc, char ** argv){
     }
     if (t%1000==0){
       std::cout << "t = " << t*dt*1E-9*3314 << " / " << lsim*dt*1E-9*3314 << ".\n";
-      std::cout << "force frame " << t/10000 << ": " << totalf[0] << ", " << totalf[1] << ", " << totalf[2] << "\n";  // torque: " << totaltq[0] << ".\n";
+      std::cout << "force frame " << t/10000 << ": " << totalf[0] << ", " << totalf[1] << ", " << totalf[2] << "\n";
     }
-    // Finally, integrate the motion for real based on the averaged forces, and store the result back into the regular r
+    // Real integration with averaged forces
     integrateMotion(n_part, forces, torques,  dt, r, r, randomComponent, verbose, pbc, simbox, n_scaf, gamma_trans, t, isCrossover, isBound);
     stop_frame = std::chrono::high_resolution_clock::now();
     duration_frame = std::chrono::duration_cast<std::chrono::microseconds>(stop_frame-start_frame);
@@ -422,7 +363,7 @@ int main (int argc, char ** argv){
       std::cout << "Complete Timestep for step number" << t << " = " << duration_frame.count() << " microseconds.\n";
       std::cout << "Current temperature: " << temp << " Kelvin.\n";
     }
-    // WHITELAM
+    // Adjust temp and fluid properties
     if (temp > final_temp){
       temp -= annealing_rate;
       tm273 = temp - 273.15;
@@ -431,7 +372,7 @@ int main (int argc, char ** argv){
       Er_linker = 4 * _PI * visc * pow(beadAxialSeparation/2,2) * beadAxialSeparation;
     }
     t++;
-  } // NOW LOOP BACK TO THE NEXT TIMESTEP
+  } // end of time loop
   trajectory.close();
   torqueOutput.close();
   forceOutput.close();

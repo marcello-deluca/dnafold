@@ -7,11 +7,11 @@ void calculateStochasticForces(std::vector<std::vector<double> > & randomCompone
       randomComponent[i][j] = sqrt (2 * k_B * temp / gamma_trans) * distribution (generator);
     }
 
-    for (size_t j = 3; j < 4; ++j){
-      randomComponent[i][j] = sqrt(r_var) * distribution(generator);
-      randomComponent[i][j+1] = 0;
-      randomComponent[i][j+2] = 0;
-    }
+    //for (size_t j = 3; j < 4; ++j){
+    //   randomComponent[i][j] = sqrt(r_var) * distribution(generator);
+    //   randomComponent[i][j+1] = 0;
+    //   randomComponent[i][j+2] = 0;
+    // }
     //if (t % 20000 == 0){
     // std::cout << "Random force components on " << i << " at time " << t << ": {" << randomComponent[i][0] << ", " << randomComponent[i][1] << ", " << randomComponent[i][2] << ", " << randomComponent[i][3] << ", " << randomComponent[i][4] << ", "<< randomComponent[i][5] << "}.\n";
     //}

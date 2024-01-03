@@ -73,7 +73,7 @@ int readInputFile(std::string fileLocation, std::vector<std::pair<std::string, s
 	}
       }
       for (size_t i = 0; i < InputParams.size(); ++i){
-	std::cout << "Parameter " << i << " values: (first) " << InputParams[i].first << "; (second) " << InputParams[i].second << "\n";
+	std::cout << "Parameter " << i << " values: (first) " << InputParams[i].first << ", (second) " << InputParams[i].second << "\n";
       }
   } else {
     std::cerr << "bad input\n";

@@ -41,21 +41,11 @@ void calculateIndividualParticleForces(size_t firstIndex, size_t secondIndex, st
       size_t ip1 = i+1;
       distances(pbc,sb,RXI,RYI,RZI,RXIJ,RYIJ,RZIJ,DIST,r,ip1);
       if (StrandNumber[i] != StrandNumber[ip1] && isBound[i] && isBound[ip1]){
-	//if ( isBound[i] && isBound[ip1] && isCrossover[i] && isCrossover[ip1] && StrandNumber[i]!=StrandNumber[ip1]){ //CROSSOVER
 	FORCE = simpleHarmonic(beadRadialSeparation, DIST, k_stretch);
-	//addPairForces(i,i+1,forces,FORCE,RXIJ,RYIJ,RZIJ,DIST,mtx);
-	//	if (t%1000==0 && verbose){
-	//  std::cout << "pair " <<  i  << ", " << i+1  <<  " crossover forces = "  <<  FORCE << " from dist " << DIST << ".\n"; 
-	//	}
       } else { //NOT CROSSOVER
 	FORCE = simpleHarmonic(beadAxialSeparation, DIST, k_stretch);
-	//addPairForces(i,i+1,forces,FORCE,RXIJ,RYIJ,RZIJ,DIST, mtx);
-	//	if (t%1000==0 && verbose){
-	//	  std::cout << "pair " <<  i  << ", " << i+1  <<  " continuous duplex forces = "  <<  FORCE << " from dist " << DIST << ".\n"; 
-	//}
       }
       addPairForces(i,i+1,forces,FORCE,RXIJ,RYIJ,RZIJ,DIST,mtx);
-
       //CROSSOVER STABILIZATION
       if (i < nScm1-1){
 	if (isBound[i] && isBound[i+1] && isBound[i+2]){ //make sure all 3 species are bound
@@ -90,12 +80,9 @@ void calculateIndividualParticleForces(size_t firstIndex, size_t secondIndex, st
 	}
       }
     } // end of bonded scaffold loop
-
-
     ////////////////////////////////////////////////////////////////
     // NONBONDED FORCES ///////////////////////////////////////////
     //////////////////////////////////////////////////////////////
-
     //STAPLE-SCAFFOLD BINDING POTENTIAL
     if (i < n_scaf){
       IDX = belongsTo[i];
@@ -155,8 +142,6 @@ void calculateIndividualParticleForces(size_t firstIndex, size_t secondIndex, st
 	}
       }
     } //close "else"
-
-
     // EXCLUDED VOLUME INTERACTIONS
     for (size_t nidx = 0; nidx < sz; ++nidx){
       size_t idx = vli.NeighborList[nidx];
