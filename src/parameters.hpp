@@ -59,7 +59,7 @@ const double beadDiameter = 2.7; //nm
 const double beadAxialSeparation = 2.725; //nm
 const double beadRadialSeparation = 2.4; //nm
 const double sigma = pow(beadRadialSeparation,0.833);
-const double epsilon = 6.96; //pN*nm
+const double epsilon = 6.96 * 10; //pN*nm
 const double r_cut = 15; //nm
 const double l_k = .004; //inverse spring constant of bead-chain
 const double crossover_stiffness = 30; //N/m
@@ -75,11 +75,11 @@ size_t n_bonds = 0;
 // Initializing simluation variables double sigma;
 double dr;
 double k_B = .0138; //pN*nm / K
-//modified to go faster
-double gamma_trans = 4 * _PI * visc * (beadAxialSeparation+beadRadialSeparation); // 4πηR   gamma units: pN / nm * ns
-double gamma_rot  = 8 * _PI * visc * pow(beadDiameter/2,3); // 8πηR^3
-double Er_linker = 4 * _PI * visc * pow(beadAxialSeparation/2,2) * beadAxialSeparation;
-double r_var = 2 * dt * k_B * temp / gamma_rot;
+//value of gamma_trans modified to increase simulation speed.
+double gamma_trans = 4 * _PI * visc * (beadAxialSeparation+beadRadialSeparation)/2; // 4πηR   gamma units: pN / nm * ns
+//double gamma_rot  = 8 * _PI * visc * pow(beadDiameter/2,3); // 8πηR^3
+//double Er_linker = 4 * _PI * visc * pow(beadAxialSeparation/2,2) * beadAxialSeparation;
+//double r_var = 2 * dt * k_B * temp / gamma_rot;
 double stretch;
 double e_dist;
 double default_value = 0;

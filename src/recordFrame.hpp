@@ -33,6 +33,7 @@ void recordFrame(std::string & OUT_TYPE_, std::ofstream & traj, std::vector<posi
       xpos[i] = R[i].x/simbox.dimensions.x+0.5;
       ypos[i] = R[i].y/simbox.dimensions.y+0.5;
       zpos[i] = R[i].z/simbox.dimensions.z+0.5;
+
       if (CenterScaffold){      
 	// CORRECTION FOR SCAFFOLD OVERFLOWING THROUGH PERIODIC BOUNDARY
 	if (i>0 && i<n_scaf){

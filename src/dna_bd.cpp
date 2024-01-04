@@ -188,7 +188,6 @@ int main (int argc, char ** argv){
   std::cout << "Gamma_trans = " << gamma_trans <<".\n";
   std::cout << "Viscosity = " << visc << ".\n";
   std::cout << "Temp = " << temp << ".\n";
-  std::cout << "Gamma_rot = " << gamma_rot << ".\n";
   std::cout << "Using seed = " << seed << ".\n";
   std::cout << "Initializing particles...\n";
   //////////////////////////////////////////////////////////////////
@@ -293,7 +292,7 @@ int main (int argc, char ** argv){
     resetForces(forces, torques,  n_part);
     resetStochasticForces(randomComponent, n_part);
     // OBTAIN RANDOM FORCES FROM IMPLICIT SOLVENT    
-    calculateStochasticForces(randomComponent, k_B, temp, gamma_trans, n_part, generator, distribution, gamma_rot, t, r_var);
+    calculateStochasticForces(randomComponent, k_B, temp, gamma_trans, n_part, generator, distribution, t);
     if (t%1000==0){
       btout2 << t << " " << n_bound_staples << "\n";
     }
@@ -368,8 +367,8 @@ int main (int argc, char ** argv){
       temp -= annealing_rate;
       tm273 = temp - 273.15;
       visc = (3.245157366681122E-11 * pow(tm273,4) - 9.061289916246450E-09 * pow(tm273,3) + 9.845093457119180E-07 * pow(tm273,2) - 5.521101038709857E-05 * tm273 + 1.778370453327189E-03) * 1E3;
-      gamma_trans = 4 * _PI * visc * (beadAxialSeparation+beadRadialSeparation)/4;
-      Er_linker = 4 * _PI * visc * pow(beadAxialSeparation/2,2) * beadAxialSeparation;
+      gamma_trans = 4 * _PI * visc * (beadAxialSeparation+beadRadialSeparation)/2;
+      //Er_linker = 4 * _PI * visc * pow(beadAxialSeparation/2,2) * beadAxialSeparation;
     }
     t++;
   } // end of time loop
