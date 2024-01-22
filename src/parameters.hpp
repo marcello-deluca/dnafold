@@ -59,11 +59,7 @@ const double beadDiameter = 2.7; //nm
 const double beadAxialSeparation = 2.725; //nm
 const double beadRadialSeparation = 2.4; //nm
 const double sigma = pow(beadRadialSeparation,0.833);
-<<<<<<< HEAD
-const double epsilon = 6.96 * 36; //pN*nm
-=======
 const double epsilon = 6.96; //pN*nm
->>>>>>> parent of b7215ce (diffusion)
 const double r_cut = 15; //nm
 const double l_k = .004; //inverse spring constant of bead-chain
 const double crossover_stiffness = 30; //N/m

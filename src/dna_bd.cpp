@@ -204,6 +204,20 @@ int main (int argc, char ** argv){
     simbox.dimensions.y = yboxsize;
     simbox.dimensions.z = zboxsize;
   }
+
+  int n_bonds = 0;
+  for (size_t i = 0; i < n_part; i++){
+    for (size_t j = 0; j < n_part; j++){
+      if (staple_connections[i][j]) { // TYPE 1: STAPLE BACKBONE
+        n_bonds++;
+      }
+      if (connectivity[i][j]) { // TYPE 3: SCAFFOLD BACKBONE
+        n_bonds++;
+      }
+    }
+  }
+
+
   /////////////////////////////////////////////////////////////////
   // GENERATE TOPOLOGY FILE //////////////////////////////////////
   ///////////////////////////////////////////////////////////////
@@ -215,7 +229,7 @@ int main (int argc, char ** argv){
   topf.open(LAMMPS_fname);
   topf << "# Atom and bond counts\n";
   topf << n_part << " atoms\n";
-  topf << "166 bonds\n";
+  topf << n_bonds << " bonds\n";
   topf << "0 angles\n";
   topf << "0 dihedrals\n\n";
   topf << n_staple_seqs + 1 << " atom types\n";
