@@ -138,10 +138,10 @@ int main (int argc, char ** argv){
     }
   }
   //Sheet Structure
-  //isCrossover[42]=0;
-  // isCrossover[41]=0;
-  // isCrossover[belongsTo[42]]=0;
-  //isCrossover[belongsTo[41]]=0;
+  isCrossover[42]=0;
+  isCrossover[41]=0;
+  isCrossover[belongsTo[42]]=0;
+  isCrossover[belongsTo[41]]=0;
   makeConnectivityMatrix(n_scaf, connectivity);
   for(size_t i = 0; i < n_part; i++){
     for (size_t j = 0; j < n_part; j++){
