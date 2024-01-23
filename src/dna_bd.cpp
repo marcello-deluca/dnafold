@@ -127,11 +127,7 @@ int main (int argc, char ** argv){
       }
     }
   }
-  //Sheet Structure
-  //isCrossover[42]=0;
-  //isCrossover[41]=0;
-  //isCrossover[belongsTo[42]]=0;
-  //isCrossover[belongsTo[41]]=0;
+
   makeConnectivityMatrix(n_scaf, connectivity);
   for(size_t i = 0; i < n_part; i++){
     for (size_t j = 0; j < n_part; j++){
@@ -139,30 +135,7 @@ int main (int argc, char ** argv){
 	belongsTo[i]=j;
       }
     }
-  }
-
-
-  
-  for (size_t i = 0; i < n_part; ++i){
-    std::cout << "Particle i is " << (isCrossover[i]?"":" not ") << " a crossover\n";
-  }
-
-  for (size_t i = 0; i < n_part; ++i){
-    std::cout << "StrandNumber[" << i << "] = " << StrandNumber[i] << "\n";
-  }
-
-  for (size_t i = 0; i < n_part; ++i){
-    std::cout << "BelongsTo["<<i<<"] = " << belongsTo[i] << "\n";
-  }
-
-  for (size_t i = 0; i < n_part; ++i){
-    for (size_t j = 0; j < n_part; ++j){
-      if (staple_connections[i][j]){
-	std::cout << "staple bead " << i << " and " << j << " are " << (staple_connections[i][j]?"":" not ") << "connected.\n";
-      }
-    }
-  }
-  
+  }  
   
   std::ofstream metadatafile;
   std::string metadatafilename;
