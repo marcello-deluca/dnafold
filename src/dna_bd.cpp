@@ -40,6 +40,7 @@ int main (int argc, char ** argv){
   int NATOM;
   size_t STEPNUMBER = 0;
   setParameters(stepsPerFrame,lsim,dt,print_to_stdout_every,stepsPerNeighborListRefresh,temp,final_temp,annealing_rate,lastconfname,CIRCULAR_SCAFFOLD,FORCED_BINDING,NTHREADS,reportTimings,pbc, inFile,outFile, binding_energy_kcal_mol, CubicBoxSize, shrink_rate, simbox_final_size_ratio,inputs);
+  simBox<double> simbox(CubicBoxSize, CubicBoxSize, CubicBoxSize);
   std::string trajectory_file_name;
   std::cout << "Outputting to files starting with " << outFile << "\n";
   trajectory_file_name.append(outFile);

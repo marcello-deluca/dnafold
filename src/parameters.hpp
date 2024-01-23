@@ -66,7 +66,6 @@ const double crossover_stiffness = 30; //N/m
 const double dsdna_lp = 50; //nm
 // SIMULATION BOX SIZE
 double CubicBoxSize = 200;
-simBox<double> simbox(CubicBoxSize, CubicBoxSize, CubicBoxSize);
 // SHRINKING BOX CONDITION
 double shrink_rate = 1E-5; //nm/step
 double simbox_final_size_ratio = .5; //unitless
