@@ -379,10 +379,6 @@ int main (int argc, char ** argv){
       torques[i][0] = (torques[i][0] + torques_forw[i][0])/2;
       totaltq[0] += torques[i][0];
     }
-    if (t%1000==0){
-      std::cout << "t = " << t*dt*1E-9*5200 << " / " << lsim*dt*1E-9*5200 << ".\n";
-      // std::cout << "force frame " << t/10000 << ": " << totalf[0] << ", " << totalf[1] << ", " << totalf[2] << "\n";
-    }
     // Real integration with averaged forces
     integrateMotion(n_part, forces, torques,  dt, r, r, randomComponent, verbose, pbc, simbox, n_scaf, gamma_trans, t, isCrossover, isBound);
     stop_frame = std::chrono::high_resolution_clock::now();
@@ -394,6 +390,7 @@ int main (int argc, char ** argv){
     }
     // Adjust temp and fluid properties
     if (temp > final_temp){
+      std::cout << "t = " << t*dt*1E-9*5200 << " / " << lsim*dt*1E-9*5200 << ".\n";
       temp -= annealing_rate;
       tm273 = temp - 273.15;
       visc = (3.245157366681122E-11 * pow(tm273,4) - 9.061289916246450E-09 * pow(tm273,3) + 9.845093457119180E-07 * pow(tm273,2) - 5.521101038709857E-05 * tm273 + 1.778370453327189E-03) * 1E3;
