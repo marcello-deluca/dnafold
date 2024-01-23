@@ -24,6 +24,6 @@ clean:
 depend:
 	makedepend $(SRCS)
 
-dna_bd.o: importer_function.hpp recordFrame.hpp noOverlapsAtInit.hpp makeConnectivityMatrix.hpp parameters.hpp headers.hpp simInit.hpp resetForces.hpp resetStochasticForces.hpp calculateStochasticForces.hpp calculatePairForcesNeighbor.hpp calculateBendingForcesParallel.hpp integrateMotion.hpp calculateICSTorsionAndBending.hpp setParameters.hpp readInputFile.hpp parse_json.hpp
+dna_bd.o: importer_function.hpp recordFrame.hpp noOverlapsAtInit.hpp makeConnectivityMatrix.hpp parameters.hpp headers.hpp simInit.hpp resetForces.hpp resetStochasticForces.hpp calculateStochasticForces.hpp calculatePairForcesNeighbor.hpp calculateBendingForces.hpp integrateMotion.hpp calculateICSTorsionAndBending.hpp setParameters.hpp readInputFile.hpp parse_json.hpp
 importer_function.o: importer_function.hpp
 

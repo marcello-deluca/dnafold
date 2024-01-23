@@ -8,7 +8,7 @@
 #include "resetForces.hpp"
 #include "resetStochasticForces.hpp"
 #include "calculateStochasticForces.hpp"
-#include "calculateBendingForcesParallel.hpp"
+#include "calculateBendingForces.hpp"
 #include "integrateMotionParallel.hpp"
 #include "makeConnectivityMatrix.hpp"
 #include "calculateICSTorsionAndBending.hpp"
@@ -73,25 +73,7 @@ int main (int argc, char ** argv){
   }
   std::cout << "outputting first bind times for each scaf to: " << FirstBindTime << ".\n";
   fbtOut << "particleNumber firstEncounterTime\n";
-  std::ofstream forceOutput;
-  std::string forceOutputName;
-  forceOutputName.append(trajectory_file_name);
-  forceOutputName.append("_FORCES.dat");
-  forceOutput.open(forceOutputName);
-
-  std::ofstream torqueOutput;
-  std::string torqueOutputName;
-  torqueOutputName.append(trajectory_file_name);
-  torqueOutputName.append("_TORQUES.dat");
-  torqueOutput.open(torqueOutputName);
   
-  std::ofstream angleOutput;
-  std::string angleOutputName;
-  angleOutputName.append(trajectory_file_name);
-  angleOutputName.append("_ANGLES.dat");
-  angleOutput.open(angleOutputName);  
-  angleOutput << "N B APG X Y\n";
-
   std::vector<std::vector<int> > scaffoldNucleotides;
   std::vector<std::vector<int> > stapleNucleotides;
   
@@ -121,6 +103,7 @@ int main (int argc, char ** argv){
   std::vector<std::vector<double> > torques_forw = torques;
   std::vector<position3D<double> > r_proposed = r;
   std::vector<VerletList> neighbors;
+
   // RANDOM NUMBER GENERATORS
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
@@ -129,6 +112,12 @@ int main (int argc, char ** argv){
   size_t n_bound_staples = 0;
   load_file(&inFile[0], SM, staple_connections, stapleNumbers, connectivity, n_bonds, n_staple_seqs, isCrossover, StrandNumber, n_nucleotides_per_bead, CIRCULAR_SCAFFOLD);
   std::cout << "LOADED " << inFile << ".\n";
+
+  if (CIRCULAR_SCAFFOLD && StrandNumber[0] != StrandNumber[n_scaf-1]){
+    isCrossover[0]=true;
+    isCrossover[n_scaf-1]=true;
+  }
+  
   for (size_t i = 0; i < n_part;i++){
     for (size_t j = 0; j < n_part; j++){
       if (SM[i][j]){
@@ -138,10 +127,10 @@ int main (int argc, char ** argv){
     }
   }
   //Sheet Structure
-  isCrossover[42]=0;
-  isCrossover[41]=0;
-  isCrossover[belongsTo[42]]=0;
-  isCrossover[belongsTo[41]]=0;
+  //isCrossover[42]=0;
+  //isCrossover[41]=0;
+  //isCrossover[belongsTo[42]]=0;
+  //isCrossover[belongsTo[41]]=0;
   makeConnectivityMatrix(n_scaf, connectivity);
   for(size_t i = 0; i < n_part; i++){
     for (size_t j = 0; j < n_part; j++){
@@ -150,6 +139,30 @@ int main (int argc, char ** argv){
       }
     }
   }
+
+
+  
+  for (size_t i = 0; i < n_part; ++i){
+    std::cout << "Particle i is " << (isCrossover[i]?"":" not ") << " a crossover\n";
+  }
+
+  for (size_t i = 0; i < n_part; ++i){
+    std::cout << "StrandNumber[" << i << "] = " << StrandNumber[i] << "\n";
+  }
+
+  for (size_t i = 0; i < n_part; ++i){
+    std::cout << "BelongsTo["<<i<<"] = " << belongsTo[i] << "\n";
+  }
+
+  for (size_t i = 0; i < n_part; ++i){
+    for (size_t j = 0; j < n_part; ++j){
+      if (staple_connections[i][j]){
+	std::cout << "staple bead " << i << " and " << j << " are " << (staple_connections[i][j]?"":" not ") << "connected.\n";
+      }
+    }
+  }
+  
+  
   std::ofstream metadatafile;
   std::string metadatafilename;
   metadatafilename.append("simulation_metadata.dat");
@@ -197,7 +210,7 @@ int main (int argc, char ** argv){
   if (!RESTART){
     simInit(r, n_scaf, simbox, beadDiameter, n_part, beadAxialSeparation, beadRadialSeparation, staple_connections, SM);
   } else {
-    load_frame(lastconfname,xboxsize,yboxsize,zboxsize,NATOM,STEPNUMBER,r);
+    //load_frame(lastconfname,xboxsize,yboxsize,zboxsize,NATOM,STEPNUMBER,r);
   }
   if (RESTART){
     simbox.dimensions.x = xboxsize;
@@ -317,8 +330,8 @@ int main (int argc, char ** argv){
     //PAIR POTENTIALS - BOTH BACKBONE AND NONBONDED
     start = std::chrono::high_resolution_clock::now();
     std::vector<std::thread> ForceLoopsThreads;
-    ForceLoopsThreads.push_back(std::thread(calculatePairForces,std::ref(forces),std::ref(r),std::ref(simbox),std::ref(pbc),std::ref(isCrossover),std::ref(beadAxialSeparation),std::ref(beadRadialSeparation),std::ref(epsilon),std::ref(sigma),std::ref(n_part),std::ref(n_scaf),std::ref(n_stap),std::ref(belongsTo),std::ref(isBound),std::ref(staple_connections), std::ref(r_cut),std::ref(CIRCULAR_SCAFFOLD),std::ref(btout),std::ref(t),std::ref(n_bound_staples),true,std::ref(StrandNumber),std::ref(fbtOut),std::ref(prevBound),std::ref(binding_energy_kcal_mol),std::ref(binding_distance_cutoff),std::ref(FORCED_BINDING),std::ref(mutexes), std::ref(neighbors), std::ref(NTHREADS)));
-    ForceLoopsThreads.push_back(std::thread(calculateBendingForces,n_scaf,std::ref(isBound),std::ref(r), std::ref(forces), dsdna_lp, k_B*temp, beadAxialSeparation, std::ref(stapleNumbers), std::ref(isCrossover), std::ref(simbox), pbc, std::ref(mutexes)));
+    ForceLoopsThreads.push_back(std::thread(calculatePairForces,std::ref(forces),std::ref(r),std::ref(simbox),std::ref(pbc),std::ref(isCrossover),std::ref(beadAxialSeparation),std::ref(beadRadialSeparation),std::ref(epsilon),std::ref(sigma),std::ref(n_part),std::ref(n_scaf),std::ref(n_stap),std::ref(belongsTo),std::ref(isBound),std::ref(staple_connections), std::ref(r_cut),std::ref(CIRCULAR_SCAFFOLD),std::ref(btout),std::ref(t),std::ref(n_bound_staples),true,std::ref(StrandNumber),std::ref(fbtOut),std::ref(prevBound),std::ref(binding_energy_kcal_mol),std::ref(binding_distance_cutoff),std::ref(FORCED_BINDING),std::ref(mutexes), std::ref(neighbors), NTHREADS));
+    ForceLoopsThreads.push_back(std::thread(calculateBendingForces,n_scaf,std::ref(isBound),std::ref(r), std::ref(forces), dsdna_lp, k_B*temp, beadAxialSeparation, std::ref(stapleNumbers), std::ref(isCrossover), std::ref(simbox), pbc));
     for (auto & thread:  ForceLoopsThreads){
       while(!thread.joinable()){
       }
@@ -341,8 +354,8 @@ int main (int argc, char ** argv){
     start = std::chrono::high_resolution_clock::now();
     resetForces(forces_forw, torques_forw, n_part);
     std::vector<std::thread> RungeKuttaThreads;
-    RungeKuttaThreads.push_back(std::thread(calculatePairForces,std::ref(forces),std::ref(r_proposed),std::ref(simbox),std::ref(pbc),std::ref(isCrossover),std::ref(beadAxialSeparation),std::ref(beadRadialSeparation),std::ref(epsilon),std::ref(sigma),std::ref(n_part),std::ref(n_scaf),std::ref(n_stap),std::ref(belongsTo),std::ref(isBound),std::ref(staple_connections), std::ref(r_cut),std::ref(CIRCULAR_SCAFFOLD),std::ref(btout),std::ref(t),std::ref(n_bound_staples),true,std::ref(StrandNumber),std::ref(fbtOut),std::ref(prevBound),std::ref(binding_energy_kcal_mol),std::ref(binding_distance_cutoff),std::ref(FORCED_BINDING),std::ref(mutexes), std::ref(neighbors), std::ref(NTHREADS)));
-    RungeKuttaThreads.push_back(std::thread(calculateBendingForces,n_scaf,std::ref(isBound),std::ref(r_proposed), std::ref(forces), dsdna_lp, k_B*temp, beadAxialSeparation, std::ref(stapleNumbers), std::ref(isCrossover), std::ref(simbox), pbc, std::ref(mutexes)));
+    RungeKuttaThreads.push_back(std::thread(calculatePairForces,std::ref(forces),std::ref(r_proposed),std::ref(simbox),std::ref(pbc),std::ref(isCrossover),std::ref(beadAxialSeparation),std::ref(beadRadialSeparation),std::ref(epsilon),std::ref(sigma),std::ref(n_part),std::ref(n_scaf),std::ref(n_stap),std::ref(belongsTo),std::ref(isBound),std::ref(staple_connections), std::ref(r_cut),std::ref(CIRCULAR_SCAFFOLD),std::ref(btout),std::ref(t),std::ref(n_bound_staples),true,std::ref(StrandNumber),std::ref(fbtOut),std::ref(prevBound),std::ref(binding_energy_kcal_mol),std::ref(binding_distance_cutoff),std::ref(FORCED_BINDING),std::ref(mutexes), std::ref(neighbors), NTHREADS));
+    RungeKuttaThreads.push_back(std::thread(calculateBendingForces,n_scaf,std::ref(isBound),std::ref(r_proposed), std::ref(forces), dsdna_lp, k_B*temp, beadAxialSeparation, std::ref(stapleNumbers), std::ref(isCrossover), std::ref(simbox), pbc));
     for (auto & thread : RungeKuttaThreads){
       while(!thread.joinable()){
       }
@@ -366,8 +379,8 @@ int main (int argc, char ** argv){
       totaltq[0] += torques[i][0];
     }
     if (t%1000==0){
-      std::cout << "t = " << t*dt*1E-9*3314 << " / " << lsim*dt*1E-9*3314 << ".\n";
-      std::cout << "force frame " << t/10000 << ": " << totalf[0] << ", " << totalf[1] << ", " << totalf[2] << "\n";
+      std::cout << "t = " << t*dt*1E-9*5200 << " / " << lsim*dt*1E-9*5200 << ".\n";
+      // std::cout << "force frame " << t/10000 << ": " << totalf[0] << ", " << totalf[1] << ", " << totalf[2] << "\n";
     }
     // Real integration with averaged forces
     integrateMotion(n_part, forces, torques,  dt, r, r, randomComponent, verbose, pbc, simbox, n_scaf, gamma_trans, t, isCrossover, isBound);
@@ -376,6 +389,7 @@ int main (int argc, char ** argv){
     if (t%1001==0){
       std::cout << "Complete Timestep for step number" << t << " = " << duration_frame.count() << " microseconds.\n";
       std::cout << "Current temperature: " << temp << " Kelvin.\n";
+      std::cout << "Currently " << n_bound_staples << " staples are bound\n";
     }
     // Adjust temp and fluid properties
     if (temp > final_temp){
@@ -388,8 +402,9 @@ int main (int argc, char ** argv){
     t++;
   } // end of time loop
   trajectory.close();
-  torqueOutput.close();
-  forceOutput.close();
+  //torqueOutput.close();
+  //forceOutput.close();
   btout.close();
   return EXIT_SUCCESS;
 }
+//

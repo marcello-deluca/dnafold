@@ -1,0 +1,4 @@
+80c80
+< 	double FFI = KTH * th_eff;
+---
+> 	double FFI = KTH * th_eff/sin(th_eff);

@@ -218,7 +218,6 @@ void load_file (char * ifname, std::vector<std::vector<int> > & SM_, std::vector
       StrandNumber[bead_number] = Staples[index][0];
       // We now know that there is at least one extra staple, so increment staple_nucleotide_number.
       // add the connection between the previous bead and this one.
-      //std::cout << "staple_connections[" << bead_number << "][" << bead_number+1 << "] += 1;"<<std::endl;
       staple_nucleotide_number++;
 
       // If the neighbor accounts for the 11th bead in the series, we need to make a new bead. We also need to add a backbone connection between the previous staple and the new one.
