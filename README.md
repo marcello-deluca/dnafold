@@ -31,6 +31,7 @@ The most rudimentary just shows particle locations:
 
 The nicer version also shows the backbone of the ssDNA scaffold and staples:
 - Open the topology file (e.g., in the 32HB folder, once the simulation is run: "32HB.dat_TOPOLOGY.dat") and select "bond" or "molecular" style
+- On the right side of the page, under the "Visual elements" pane, select "Bonds". Increase the bond width to 2.8. If flat shading is enabled, turn it off.
 - under the "add modification" selection pane on the top right, select "load trajectory"
 - navigate down to the panel titled "external file" and click the folder icon, then select the .dat file containing the trajectory (e.g. "32HB.dat").
 - OVITO should automatically detect that this file is formatted as a LAMMPS dump file; under the box "Trajectory Source: LAMMPS dump", select the additional option "file contains multiple timesteps" or "file contains time series" if it is not checked automatically. 
