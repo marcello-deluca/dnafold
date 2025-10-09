@@ -128,7 +128,7 @@ void recordFrame(std::string & OUT_TYPE_, std::ofstream & traj, std::vector<posi
       } else {
 	type = stapleNumbers_[i]+2;
       }
-      traj << i << " " << type << " " << xpos[i] << " " << ypos[i] << " " << zpos[i];
+      traj << i+1 << " " << type << " " << xpos[i] << " " << ypos[i] << " " << zpos[i];
       if (!recordICS){
 	traj << "\n";
       } else {

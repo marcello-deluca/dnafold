@@ -12,7 +12,7 @@ bool evaluateTrueFalseStatement(std::string in){
     exit(0);
   }
 }
-void setParameters (size_t & stepsPerFrame, size_t & lsim, double & dt, size_t & print_to_stdout_every, size_t & stepsPerNeighborListRefresh, double & temp, double & final_temp, double & annealing_rate, std::string & lastconfname, bool & CIRCULAR_SCAFFOLD, bool & FORCED_BINDING, size_t NTHREADS, int & reportTimings, bool & pbc, string & inFile, string & outFile, double & binding_energy_kcal_mol, double & CubicBoxSize, double & shrink_rate, double & simbox_final_size_ratio, vector<pair<string,string> > & inputs){
+void setParameters (size_t & stepsPerFrame, size_t & lsim, double & dt, size_t & print_to_stdout_every, size_t & stepsPerNeighborListRefresh, double & temp, double & final_temp, double & annealing_rate, std::string & lastconfname, bool & CIRCULAR_SCAFFOLD, bool & FORCED_BINDING, size_t & NTHREADS, int & reportTimings, bool & pbc, string & inFile, string & outFile, double & binding_energy_kcal_mol, double & CubicBoxSize, double & shrink_rate, double & simbox_final_size_ratio, vector<pair<string,string> > & inputs){
   for (size_t i = 0; i < inputs.size(); ++i){
     std::string key = inputs[i].first;
     std::string val = inputs[i].second;

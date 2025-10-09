@@ -1,0 +1,31 @@
+
+#------ Begin Input ------#
+
+## Files
+inFile = smile.json
+outFile = smile.dat
+
+## STEPS
+lsim = 1E6
+dt = 0.01
+print_to_stdout_every = 1000
+stepsPerFrame = 1000
+NTHREADS = 10
+
+## CONDITIONS
+CIRCULAR_SCAFFOLD = true
+FORCED_BINDING = true
+temp = 300 				#K
+BoxSize = 200			#nm
+
+## RARELY CHANGED
+pbc = true
+bindStrength = 10		#kcal/mol
+annealing_rate = 0		#K/ns
+final_temp = 300		#K
+ShrinkRate = 1E-3		#nm/ns
+FinalSizeRatio = 0.5
+stepsPerNeighborListRefresh = 500
+
+#------- End Input -------#
+

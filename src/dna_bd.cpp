@@ -229,7 +229,7 @@ int main (int argc, char ** argv){
   topf << -simbox.dimensions.z/2 << " " << simbox.dimensions.z/2 << " zlo zhi\n\n";
   topf << "Atoms\n\n";
   for (size_t i = 0; i < n_part; i++){
-    topf << "   " << i << "   0   ";
+    topf << "   " << i+1 << "   0   ";
     if (i < n_scaf){
       topf << 1;
     } else {
@@ -242,13 +242,13 @@ int main (int argc, char ** argv){
   int bond_idx = 0;
   for (size_t i = 0; i < n_part; i++){
     for (size_t j = 0; j < n_part; j++){
-      if (staple_connections[i][j]) { // TYPE 1: STAPLE BACKBONE
+      if (connectivity[i][j]) { // TYPE 1: SCAFFOLD BACKBONE
         bond_idx++;
-        topf << "   " << bond_idx << "   2   " << i << "   " << j << "\n";
+        topf << "   " << bond_idx << "   1   " << i+1 << "   " << j+1 << "\n";
       }
-      if (connectivity[i][j]) { // TYPE 3: SCAFFOLD BACKBONE
+      if (staple_connections[i][j]) { // TYPE 2: STAPLE BACKBONE
         bond_idx++;
-        topf << "   " << bond_idx << "   3   " << i << "   " << j << "\n";
+        topf << "   " << bond_idx << "   2   " << i+1 << "   " << j+1 << "\n";
       }
     }
   }

@@ -1,38 +1,89 @@
-dnafold: codes for simulating DNA origami folding
+# DNAfold
 
-access our user guide at https://daniel-duke.github.io/dnafold-docs/
+Access our user guide [here](https://daniel-duke.github.io/DNAfold-docs/).
 
+See our publication in Nature Communications [here](https://doi.org/10.1038/s41467-024-46998-y).
 
-Quick start (bash instructions in parentheses, replace <PATH_TO_DNAFOLD> with wherever you put the files): 
-1. Make sure you have git and gnu make installed, and a c++ compiler.
-2. Clone this repository ("git clone https://github.com/marcello-deluca/dnafold")
-3. in either WSL, a Linux OS (we have tested on Ubuntu and CentOS), or Mac OS, enter the "src" directory ("cd <PATH_TO_DNAFOLD>/src")
-4. build the software by running make ("make")
-5. There is now an executable in <PATH_TO_DNAFOLD> assuming compilation did not fail.
-6. You can now run examples in the "examples" folder:
-7. Navigate to the "examples" folder ("cd <PATH_TO_DNAFOLD>/examples/")
-8. Navigate to one of the examples, e.g. 3D_4HB ("cd 3D_4HB")
-9. Run the included input file: ("../../dnafold input.txt")
-10. The program will automatically parse the design file and run a simulation of its self assembly, in either a forced or unforced manner depending upon the user setting.
+## Installation
 
-Descriptions of each example:
-- 3D_4HB: small 4HB structure, unguided. Assembles in under 5 minutes on most computers.
-- laughing_face: a large structure (1456 beads / 11,648 nucleotides). Takes around 20 minutes. More diffusion will improve the final quality, but forced assembly can also make the structure topologically trapped.
-- 2D_donut: a moderate structure which self-assembles into a rectangle with a hole in the middle by force. Assembles in a few minutes.
-- 32HB: the 32HB structure that we folded in our manuscript, except assembled by force so that you can watch it fold quickly. Folds in 20-30 minutes.
+Follow the steps below to install DNAfold:
 
-Note that in all cases the total simulation time is much longer than the approximate folding time, so you can just quit the simulation using ctrl-c when you are satisfied with the folding progress having visualized the structure (see below); quoted times are based on how long it took for these devices to fold satisfactorily, not for the simulation to complete all timesteps.
+- Ensure you are operating on either WSL, macOS, or a Linux OS (we tested Ubuntu and CentOS).
 
-To visualize simulation results using OVITO visualization software (https://ovito.org):
-You have two options. 
+- Ensure you have the following installed:
+	- Git
+	- GNU Make
+	- C++ Compiler
 
-The most rudimentary just shows particle locations:
-- Just open the .dat file (e.g., in the 32HB folder, "32HB.dat")
+- Navigate to where you want to store DNAfold:
 
-The nicer version also shows the backbone of the ssDNA scaffold and staples:
-- Open the topology file (e.g., in the 32HB folder, once the simulation is run: "32HB.dat_TOPOLOGY.dat") and select "bond" or "molecular" style
-- On the right side of the page, under the "Visual elements" pane, select "Bonds". Increase the bond width to 2.8. If flat shading is enabled, turn it off. Select "Particles" and change the standard radius to 1.4 and radius scaling to 100%.
-- under the "add modification" selection pane on the top right, select "load trajectory"
-- navigate down to the panel titled "external file" and click the folder icon, then select the .dat file containing the trajectory (e.g. "32HB.dat").
-- OVITO should automatically detect that this file is formatted as a LAMMPS dump file; under the box "Trajectory Source: LAMMPS dump", select the additional option "file contains multiple timesteps" or "file contains time series" if it is not checked automatically. 
-- You should now get a nice trajectory with all of the particle motion and with all of the backbone bonds filled in.
+	`cd <PATH_TO_DNAFOLD>`
+
+- Clone the repository:
+
+	`git clone https://github.com/daniel-duke/DNAfold`
+
+- Enter the clone, then the source directory:
+
+	`cd DNAfold/src/`
+
+- Build the software:
+
+	`make`
+
+This should create an executable in the root of the cloned repository, assuming compilation did not fail.
+
+## Simulation
+
+To get a feel for how the code works, feel free to run one of the examples. For instance, to simulate the folding of a smiley face, follow the steps below:
+
+- Create and enter a simulation directory:
+
+	`mkdir <MYDIR>; cd <MYDIR>`
+
+- Copy the caDNAno file from the `examples` folder:
+
+	`cp <PATH_TO_DNAFOLD>/examples/smile/smile.json .`
+
+- Copy the input file from the `examples` folder:
+
+	`cp <PATH_TO_DNAFOLD>/examples/smile/input.txt .`
+
+- If desired, adjust the parameters in the input file.
+
+- Run DNAfold:
+
+	`<PATH_TO_DNAFOLD>/dnafold input.txt`
+
+- To run the program in the background and save the standard output to a file, use the following command:
+
+	`nohup <PATH_TO_DNAFOLD>/dnafold input.txt > report.out 2>&1 &`
+
+The program will automatically parse the caDNAno file referenced in the input file and run a simulation of its self-assembly, in either a forced or unforced manner depending upon the setting in the input file.
+
+## Visualization
+
+To visualize the simulated folding, we recommend using [OVITO](https://ovito.org).
+
+For rudimentary visualization (showing just bead positions):
+- Load the output `.dat` file in OVITO (e.g., `smile.dat`)
+
+For fancy visualization (showing backbone bonds):
+- Open the topology file in OVITO (e.g. `smile.dat_TOPOLOGY.dat`), selecting "bond" or "molecular" style when prompted.
+- One the right side of the window, under the "Visual elements" pane, select "Particles" and change the standard radius to 1.4 (also, ensure the radius scaling is set to 100%).
+- Also under the "Visual elements" pane, select "Bonds" and increase the bond width to 2.8. If flat shading is enabled, turn it off.
+- Under the "Add modification..." (right above "Visual elements"), select "Load trajectory" (under the "Modification" header).
+- Navigate down to the panel titled "Trajectory Source: External file" and click the folder icon, then select the `.dat` file containing the trajectory (e.g. `smile.dat`).
+- Voila! A beautiful visualization of DNA origami self-assembly.
+
+## Examples
+
+`donut`: a moderate 2D structure (336 beads / 2688 nucleotides) which self-assembles into a rectangle with a hole in the middle, unforced.
+
+`smile`: a large 2D structure (1456 beads / 11,648 nucleotides) in the shape of a smiley face. Often gets topologically trapped with forced folding, although the resemblance to a smiley face sometimes still emerges.
+
+`4HB`: a small 3D structure (64 bead, 512 nucleotides) based on the 4HB design studied in our manuscript. Assembles unforced within 5 minutes on most computers, with few, if any, defects.
+
+`32HB`: a large 3D structure (1024 beads, 8192 nucleotides) identical to the 32HB design studied in our manuscript. Here, it assembles by force, leading to extensive defects and poor crystallinity of the product.
+
+Note that in the case of the two smaller designs (`donut` and `4HB`), the number of simulation steps in the input file is much longer than the estimated folding time. We recommend checking the status of the folding using OVITO then quitting the simulation (`ctrl-c`, or `pkill dnafold` to kill all local DNAfold simulations) when it has reached a satisfactory state.

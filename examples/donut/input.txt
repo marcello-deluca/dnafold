@@ -1,0 +1,31 @@
+
+#------ Begin Input ------#
+
+## Files
+inFile = donut.json
+outFile = donut.dat
+
+## STEPS
+lsim = 1E8
+dt = 0.01
+print_to_stdout_every = 1000
+stepsPerFrame = 1000
+NTHREADS = 1
+
+## CONDITIONS
+CIRCULAR_SCAFFOLD = true
+FORCED_BINDING = false
+temp = 300 				#K
+BoxSize = 80			#nm
+
+## RARELY CHANGED
+pbc = true
+bindStrength = 10		#kcal/mol
+annealing_rate = 0		#K/ns
+final_temp = 300		#K
+ShrinkRate = 0			#nm/ns
+FinalSizeRatio = 1
+stepsPerNeighborListRefresh = 500
+
+#------- End Input -------#
+

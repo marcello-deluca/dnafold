@@ -57,7 +57,7 @@ double annealing_rate = 0.1E-5; //Annealing rate in K/step
 const double beadDiameter = 2.7; //nm
 const double beadAxialSeparation = 2.725; //nm
 const double beadRadialSeparation = 2.4; //nm
-const double sigma = pow(beadRadialSeparation,0.833);
+const double sigma = beadRadialSeparation/1.12;
 const double epsilon = 6.96; //pN*nm
 const double r_cut = 15; //nm
 const double l_k = .004; //inverse spring constant of bead-chain
@@ -73,7 +73,7 @@ size_t n_bonds = 0;
 // Initializing simluation variables double sigma;
 double dr;
 double k_B = .0138; //pN*nm / K
-double gamma_trans = 4 * _PI * visc * (beadAxialSeparation+beadRadialSeparation)/4; // 4πηR   gamma units: pN / nm * ns
+double gamma_trans = 6 * _PI * visc * (beadAxialSeparation+beadRadialSeparation)/4; // 4πηR   gamma units: pN / nm * ns
 double gamma_rot  = 8 * _PI * visc * pow(beadDiameter/2,3); // 8πηR^3
 double Er_linker = 4 * _PI * visc * pow(beadAxialSeparation/2,2) * beadAxialSeparation;
 double r_var = 2 * dt * k_B * temp / gamma_rot;
